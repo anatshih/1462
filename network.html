@@ -20,15 +20,32 @@
             --terminal-text: #22c55e;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-main); }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            background-color: var(--primary-bg); 
+            color: var(--text-main); 
+            flex-direction: row; 
+        }
         
         /* القائمة الجانبية */
-        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar { 
+            width: 280px; 
+            background-color: var(--sidebar-bg); 
+            color: var(--text-light); 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto; 
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1); 
+            flex-shrink: 0; 
+        }
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 2px solid var(--accent-color); background-color: #0f172a; }
         .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
         .nav-group { padding: 15px 20px 5px; font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; }
         .sidebar-menu { list-style: none; padding: 0; margin: 0; }
-        .sidebar-menu li a { display: block; padding: 12px 20px; color: var(--text-light); text-decoration: none; border-right: 4px solid transparent; }
+        .sidebar-menu li a { display: block; padding: 12px 20px; color: var(--text-light); text-decoration: none; border-right: 4px solid transparent; transition: 0.2s; }
         .sidebar-menu li a:hover { background-color: var(--sidebar-hover); }
         .sidebar-menu li a.active { background-color: var(--sidebar-hover); border-right-color: var(--accent-color); font-weight: bold; }
 
@@ -42,23 +59,23 @@
         
         /* المحاكيات (الطرفيات) */
         .terminal { background-color: var(--terminal-bg); color: var(--terminal-text); font-family: 'Courier New', monospace; padding: 15px; border-radius: 6px; height: 250px; overflow-y: auto; direction: ltr; text-align: left; margin-top: 15px; }
-        .terminal-input-area { display: flex; margin-top: 10px; }
+        .terminal-input-area { display: flex; margin-top: 10px; flex-wrap: wrap; }
         .terminal-prompt { margin-right: 10px; color: #3b82f6; font-weight: bold; }
         .terminal-input { background: transparent; border: none; color: var(--terminal-text); font-family: 'Courier New', monospace; font-size: 15px; width: 80%; outline: none; }
         
         /* محاكي Wireshark */
         .wireshark-gui { border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; margin-top: 15px; direction: ltr; }
-        .ws-toolbar { background: #f1f5f9; padding: 10px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #cbd5e1; }
-        .ws-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .ws-toolbar { background: #f1f5f9; padding: 10px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #cbd5e1; flex-wrap: wrap; }
+        .ws-btn { background: #2563eb; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .ws-btn.stop { background: var(--danger); display: none; }
-        .ws-filter { flex-grow: 1; display: flex; align-items: center; background: white; padding: 2px 5px; border: 1px solid #94a3b8; border-radius: 3px; }
-        .ws-filter input { border: none; outline: none; width: 100%; padding: 5px; }
+        .ws-filter { flex-grow: 1; display: flex; align-items: center; background: white; padding: 5px 8px; border: 1px solid #94a3b8; border-radius: 3px; min-width: 150px; }
+        .ws-filter input { border: none; outline: none; width: 100%; padding: 5px; font-size: 14px;}
         .ws-table-container { height: 200px; overflow-y: auto; background: white; border-bottom: 1px solid #cbd5e1; }
-        .ws-table { width: 100%; border-collapse: collapse; font-family: 'Courier New', monospace; font-size: 12px; }
-        .ws-table th { background: #e2e8f0; padding: 5px; text-align: left; position: sticky; top: 0; }
-        .ws-table td { border: 1px solid #f1f5f9; padding: 4px; cursor: pointer; }
+        .ws-table { width: 100%; border-collapse: collapse; font-family: 'Courier New', monospace; font-size: 13px; }
+        .ws-table th { background: #e2e8f0; padding: 8px 5px; text-align: left; position: sticky; top: 0; }
+        .ws-table td { border: 1px solid #f1f5f9; padding: 6px; cursor: pointer; }
         .ws-table tr:hover td { background: #3b82f6; color: white; }
-        .ws-details { height: 100px; background: #f8fafc; padding: 10px; font-family: 'Courier New', monospace; font-size: 12px; overflow-y: auto; }
+        .ws-details { height: 100px; background: #f8fafc; padding: 10px; font-family: 'Courier New', monospace; font-size: 13px; overflow-y: auto; }
         
         .proto-tcp { background-color: #e4ffc7; }
         .proto-http { background-color: #eaf1da; }
@@ -72,12 +89,45 @@
         .lab-section { background: #f0fdf4; border: 1px solid #bbf7d0; }
         .question { margin-bottom: 20px; }
         .question label { font-weight: bold; color: #166534; display: block; margin-bottom: 8px; }
-        .question input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box; }
-        .btn-submit { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .question input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box; font-size: 15px;}
+        .btn-submit { background: var(--accent-color); color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s;}
+        .btn-submit:hover { background: #1d4ed8; }
         .feedback { margin-top: 10px; padding: 15px; border-radius: 5px; display: none; line-height: 1.6; }
         .feedback.correct { background: #d1fae5; border: 1px solid var(--success); }
         .feedback.wrong { background: #fee2e2; border: 1px solid var(--danger); }
         .explanation { border-top: 1px dashed #94a3b8; margin-top: 10px; padding-top: 10px; font-size: 0.9rem; }
+
+        /* ==================================================== */
+        /* استجابة الموبايل والتابلت (Responsive Media Queries) */
+        /* ==================================================== */
+        
+        @media screen and (max-width: 992px) {
+            .sidebar { width: 220px; }
+        }
+
+        @media screen and (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            
+            /* القائمة الجانبية للموبايل */
+            .sidebar { width: 100%; height: auto; max-height: none; }
+            .sidebar-header { padding: 15px; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; padding: 0; margin-top: 0; }
+            .sidebar-menu li { flex: 1 1 50%; text-align: center; border-bottom: 1px solid #334155; }
+            .sidebar-menu li a { padding: 12px 10px; font-size: 0.95rem; border-right: none; }
+            .sidebar-menu li a.active { border-right: none; border-bottom: 3px solid var(--accent-color); }
+            
+            .main-content { padding: 20px 15px; }
+            .page-title { font-size: 1.5rem; }
+            
+            /* السماح بالتمرير الجانبي للمحاكيات والجداول */
+            .terminal { overflow-x: auto; white-space: nowrap; font-size: 13px; }
+            .terminal-input { width: 100%; font-size: 13px; flex: 1; }
+            .ws-table-container { overflow-x: auto; }
+            .ws-table { white-space: nowrap; }
+            .ws-toolbar { flex-direction: column; align-items: stretch; }
+            .ws-btn { width: 100%; text-align: center; }
+            .ws-filter { width: auto; }
+        }
     </style>
 </head>
 <body>

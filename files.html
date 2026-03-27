@@ -21,10 +21,10 @@
             --info-border: #3b82f6;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-main); }
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-main); flex-direction: row; }
         
         /* القائمة الجانبية */
-        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; overflow-y: auto; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; overflow-y: auto; box-shadow: -2px 0 10px rgba(0,0,0,0.1); flex-shrink: 0; }
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 2px solid var(--accent-color); background-color: #0f172a; }
         .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
         .nav-group { padding: 15px 20px 5px; font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; }
@@ -93,6 +93,48 @@
         .feedback.correct { background: #d1fae5; border: 1px solid var(--success); }
         .feedback.wrong { background: #fee2e2; border: 1px solid var(--danger); }
         .explanation { border-top: 1px dashed #94a3b8; margin-top: 10px; padding-top: 10px; font-size: 0.9rem; }
+
+        /* ==================================================== */
+        /* استجابة الموبايل والتابلت (Responsive Media Queries) */
+        /* ==================================================== */
+        
+        @media screen and (max-width: 992px) {
+            .sidebar { width: 220px; }
+            .pe-sidebar { width: 35%; }
+        }
+
+        @media screen and (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            
+            /* القائمة الجانبية للموبايل */
+            .sidebar { width: 100%; height: auto; max-height: none; }
+            .sidebar-header { padding: 15px; }
+            .sidebar-menu { display: flex; flex-wrap: wrap; padding: 0; margin-top: 0; }
+            .sidebar-menu li { flex: 1 1 50%; text-align: center; border-bottom: 1px solid #334155; }
+            .sidebar-menu li a { padding: 12px 10px; font-size: 0.95rem; border-right: none; }
+            .sidebar-menu li a.active { border-right: none; border-bottom: 3px solid var(--accent-color); }
+            
+            .main-content { padding: 20px 15px; }
+            .page-title { font-size: 1.5rem; }
+            
+            /* السماح بالتمرير الجانبي للجداول */
+            table.sim-table { white-space: nowrap; }
+            .bhe-container, .vc-files { overflow-x: auto; }
+
+            /* تعديلات VeraCrypt للموبايل */
+            .vc-volume-box, .vc-input { width: 100%; box-sizing: border-box; font-size: 13px; }
+            
+            /* تعديلات Browser History للموبايل */
+            .bhe-toolbar { flex-direction: column; gap: 10px; }
+            .bhe-search { width: 100%; box-sizing: border-box; }
+
+            /* تعديلات PE Explorer للموبايل */
+            .pe-gui { flex-direction: column; height: auto; }
+            .pe-sidebar { width: 100%; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid #cbd5e1; }
+            .pe-tab { flex: 1; text-align: center; white-space: nowrap; border-bottom: none; border-right: 1px solid #e2e8f0; padding: 10px; }
+            .pe-tab.active { border-right: 1px solid #e2e8f0; border-bottom: 4px solid var(--accent-color); }
+            .pe-content { overflow-x: auto; min-height: 250px; }
+        }
     </style>
 </head>
 <body>
