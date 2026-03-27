@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدليل العملي لمقرر التحقيقات والأدلة الرقمية (1462)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'cairo': ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#0a2540',
+                        'secondary': '#1a3a5c',
+                        'accent': '#2563eb',
+                        'surface': '#f8fafc',
+                        'muted': '#64748b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #0a2540;
+            --fg: #f8fafc;
+            --muted: #64748b;
+            --accent: #2563eb;
+            --card: #1e3a5f;
+            --border: #2d4a6f;
+            --glow: rgba(37, 99, 235, 0.3);
+        }
+
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .gradient-bg {
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(30, 58, 95, 0.3) 0%, transparent 50%),
+                linear-gradient(180deg, #0a2540 0%, #0f2d4a 100%);
+        }
+
+        .card-glass {
+            background: linear-gradient(135deg, rgba(30, 58, 95, 0.6) 0%, rgba(26, 58, 92, 0.4) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(45, 74, 111, 0.5);
+        }
+
+        .tool-card {
+            background: linear-gradient(145deg, rgba(30, 58, 95, 0.7) 0%, rgba(20, 45, 75, 0.5) 100%);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            border-color: rgba(37, 99, 235, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(37, 99, 235, 0.4);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+
+        .icon-box {
+            background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(37, 99, 235, 0.5); }
+        }
+
+        .pulse-animation {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(37, 99, 235, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(37, 99, 235, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .particle, .animate-slide-up, .pulse-animation {
+                animation: none;
+            }
+            .slide {
+                transition: opacity 0.3s ease;
+                transform: none;
+            }
+        }
+
+        .keyboard-hint {
+            font-size: 10px;
+            padding: 2px 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-cairo text-white">
+    <div class="floating-particles" id="particles"></div>
+
+    <div class="fixed top-0 left-0 right-0 h-1 bg-gray-800 z-50">
+        <div class="progress-bar h-full bg-gradient-to-l from-blue-500 to-blue-600" id="progressBar" style="width: 3.33%"></div>
+    </div>
+
+    <div class="fixed top-4 left-4 z-40 flex items-center gap-3">
+        <span class="text-sm text-gray-400">الشريحة</span>
+        <span class="text-2xl font-bold text-blue-400" id="currentSlide">1</span>
+        <span class="text-gray-600">/</span>
+        <span class="text-gray-400">30</span>
+    </div>
+
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4">
+        <button onclick="prevSlide()" class="nav-btn px-6 py-3 rounded-xl bg-gradient-to-l from-gray-700 to-gray-800 text-white flex items-center gap-2 border border-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            السابق
+        </button>
+        <div class="flex gap-1">
+            <div id="slideDots" class="flex gap-1 max-w-xs overflow-hidden"></div>
+        </div>
+        <button onclick="nextSlide()" class="nav-btn px-6 py-3 rounded-xl bg-gradient-to-l from-blue-600 to-blue-700 text-white flex items-center gap-2 border border-blue-500">
+            التالي
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="fixed bottom-6 right-6 z-40 flex gap-2 text-gray-500 text-xs">
+        <span class="keyboard-hint">Space</span>
+        <span>التالي</span>
+        <span class="keyboard-hint">→</span>
+        <span>السابق</span>
+    </div>
+
+    <div id="slidesContainer" class="w-full h-screen gradient-bg grid-pattern">
+        
+        <div class="slide active flex-col items-center justify-center h-screen p-8" data-section="cover">
+            <div class="text-center max-w-4xl animate-slide-up">
+                <div class="mb-6">
+                    <span class="px-4 py-2 rounded-full text-sm bg-blue-600/20 text-blue-300 border border-blue-500/30">
+                        جامعة القدس المفتوحة — فرع الخليل
+                    </span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight">
+                    <span class="text-white">الدليل العملي لمقرر</span><br>
+                    <span class="bg-gradient-to-l from-blue-400 to-cyan-400 bg-clip-text text-transparent">التحقيقات والأدلة الرقمية</span>
+                </h1>
+                <div class="flex items-center justify-center gap-6 mb-8">
+                    <div class="px-4 py-2 rounded-lg bg-white/5 border border-white/10">
+                        <span class="text-gray-400 text-sm">رقم المقرر</span>
+                        <p class="text-2xl font-bold text-blue-400">1462</p>
+                    </div>
+                </div>
+                <p class="text-xl text-gray-300 mb-4">إعداد: أ. أحمد عوني النتشة</p>
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80" alt="غلاف المقرر" class="w-full max-w-2xl h-48 object-cover rounded-2xl mx-auto mt-8 border border-blue-500/30 shadow-[0_0_30px_rgba(37,99,235,0.2)]">
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="intro">
+            <div class="max-w-5xl w-full">
+                <h2 class="text-4xl font-bold mb-12 text-center">
+                    <span class="text-blue-400">أهداف</span> العرض
+                </h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="tool-card rounded-2xl p-8 text-center animate-slide-up stagger-1">
+                        <div class="icon-box w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">التعرف على الأدوات</h3>
+                        <p class="text-gray-400">التعرف على أدوات التحقيق الرقمي الأساسية والمتقدمة</p>
+                    </div>
+                    <div class="tool-card rounded-2xl p-8 text-center animate-slide-up stagger-2">
+                        <div class="icon-box w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">فهم الدور الوظيفي</h3>
+                        <p class="text-gray-400">فهم دور كل أداة في عمليات التحقيق الرقمي</p>
+                    </div>
+                    <div class="tool-card rounded-2xl p-8 text-center animate-slide-up stagger-3">
+                        <div class="icon-box w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">التطبيق العملي</h3>
+                        <p class="text-gray-400">ربط الجانب النظري بالتطبيق العملي في المقرر</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="intro">
+            <div class="max-w-6xl w-full">
+                <h2 class="text-4xl font-bold mb-12 text-center">
+                    <span class="text-blue-400">المحاور</span> الرئيسية
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="tool-card rounded-2xl p-6 flex items-start gap-4 animate-slide-up stagger-1">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-2xl font-black">1</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">تحليل الشبكات والاتصالات</h3>
+                            <p class="text-gray-400 text-sm">أدوات فحص الشبكة وتتبع الاتصالات وتحليل الحزم</p>
+                        </div>
+                    </div>
+                    <div class="tool-card rounded-2xl p-6 flex items-start gap-4 animate-slide-up stagger-2">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-2xl font-black">2</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">مراقبة النظام وسجلاته</h3>
+                            <p class="text-gray-400 text-sm">أدوات مراقبة العمليات وتحليل سلوك النظام</p>
+                        </div>
+                    </div>
+                    <div class="tool-card rounded-2xl p-6 flex items-start gap-4 animate-slide-up stagger-3">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-2xl font-black">3</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">التعامل مع الأدلة الرقمية</h3>
+                            <p class="text-gray-400 text-sm">أدوات استعادة البيانات والتصوير الجنائي</p>
+                        </div>
+                    </div>
+                    <div class="tool-card rounded-2xl p-6 flex items-start gap-4 animate-slide-up stagger-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-2xl font-black">4</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">فحص الملفات ونشاط المستخدم</h3>
+                            <p class="text-gray-400 text-sm">أدوات تحليل الملفات وسلوك المستخدمين</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="network">
+            <div class="max-w-4xl w-full text-center">
+                <div class="inline-block px-4 py-2 rounded-full bg-blue-500/20 text-blue-300 text-sm mb-6">
+                    المحور الأول
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black mb-6">
+                    تحليل <span class="text-blue-400">الشبكات</span>
+                </h2>
+                <p class="text-xl text-gray-400 mb-8">أهمية تحليل الشبكات في التحقيق الرقمي</p>
+                <div class="card-glass rounded-2xl p-8 text-right max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">تتبع مصدر الهجمات الإلكترونية</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">تحليل حركة البيانات المشبوهة</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">كشف الاتصالات غير القانونية</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">جمع أدلة شبكية قابلة للاستخدام قضائياً</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="network">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">ipconfig / ifconfig</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة سطر أوامر لعرض إعدادات الشبكة الحالية بما في ذلك عنوان IP وقناع الشبكة والبوابة</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    سهلة وسريعة الاستخدام
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    متوفرة في جميع أنظمة التشغيل
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تعطي معلومات فورية عن الشبكة
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تشخيص إعدادات الشبكة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    التحقق من الاتصال
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=800&q=80" alt="CMD Screen" class="rounded-xl h-80 w-full object-contain bg-[#0c0c0c] border border-blue-500/20 p-2 shadow-lg">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="network">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">ping</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لاختبار الاتصال بين جهازين عبر الشبكة بإرسال حزم ICMP وقياس زمن الاستجابة</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    اختبار سريع للاتصال
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    قياس زمن الاستجابة (Latency)
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    اكتشاف فقدان الحزم
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    التحقق من وجود الجهاز المستهدف
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تشخيص مشاكل الشبكة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=800&q=80" alt="CMD Screen" class="rounded-xl h-80 w-full object-contain bg-[#0c0c0c] border border-cyan-500/20 p-2 shadow-lg">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="network">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">tracert / traceroute</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لتتبع مسار البيانات من الجهاز المصدر إلى الهدف مع عرض جميع المحطات الوسيطة (Routers)</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تتبع المسار الكامل للبيانات
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض زمن كل قفزة (Hop)
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحديد نقاط الضعف في المسار
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تحديد موقع الاختناقات الشبكية
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تتبع مصدر المشكلة جغرافياً
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=800&q=80" alt="CMD Screen" class="rounded-xl h-80 w-full object-contain bg-[#0c0c0c] border border-indigo-500/20 p-2 shadow-lg">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="network">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">Wireshark</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة قوية ومجانية لالتقاط وتحليل حزم البيانات في الشبكة مع دعم مئات البروتوكولات</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحليل عميق للبروتوكولات
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض تفصيلي للحزم
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    فلترة متقدمة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تصدير البيانات لتحليل لاحق
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف الهجمات والتجسس
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تحليل حركة البيانات المشبوهة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://www.wireshark.org/assets/theme/images/wireshark-main.png" alt="واجهة Wireshark" class="rounded-xl h-80 w-full object-contain bg-white border border-blue-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="network">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">Nmap</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة متقدمة لفحص الشبكة واكتشاف الأجهزة والمنافذ والخدمات العاملة</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    اكتشاف الأجهزة المتصلة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحديد الخدمات والمنافذ
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    فحص أمني متقدم
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    كشف نظام التشغيل
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف الثغرات الأمنية
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    دعم التحقيق في الاختراقات
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://nmap.org/images/zenmap-mac-2022-750w.png" alt="واجهة Nmap" class="rounded-xl h-80 w-full object-contain bg-white border border-cyan-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="system">
+            <div class="max-w-4xl w-full text-center">
+                <div class="inline-block px-4 py-2 rounded-full bg-cyan-500/20 text-cyan-300 text-sm mb-6">
+                    المحور الثاني
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black mb-6">
+                    مراقبة <span class="text-cyan-400">النظام</span>
+                </h2>
+                <p class="text-xl text-gray-400 mb-8">أهمية مراقبة النظام وسجلاته في التحقيق الرقمي</p>
+                <div class="card-glass rounded-2xl p-8 text-right max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">كشف البرمجيات الخبيثة والنشاط غير الطبيعي</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">تتبع سلوك البرامج والعمليات</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">إعادة بناء الأحداث زمنياً</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">جمع أدلة من سجلات النظام</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="system">
+            <div class="max-w-5xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">Sysinternals Suite</h2>
+                </div>
+                
+                <div class="card-glass rounded-2xl p-6 mb-6">
+                    <h3 class="text-xl font-bold text-cyan-300 mb-4">نظرة عامة</h3>
+                    <p class="text-gray-300 text-lg">مجموعة أدوات متكاملة من تطوير مارك روسينوفيتش، تم الاستحواذ عليها من قبل مايكروسوفت، وتستخدم لمراقبة النظام وتحليل سلوكه بشكل عميق</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-blue-400 font-bold">PM</span>
+                        </div>
+                        <h4 class="font-bold mb-1">Procmon</h4>
+                        <p class="text-gray-400 text-sm">مراقبة العمليات</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-lg bg-cyan-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-cyan-400 font-bold">RM</span>
+                        </div>
+                        <h4 class="font-bold mb-1">RamMap</h4>
+                        <p class="text-gray-400 text-sm">تحليل الذاكرة</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-lg bg-indigo-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-indigo-400 font-bold">TV</span>
+                        </div>
+                        <h4 class="font-bold mb-1">TCPView</h4>
+                        <p class="text-gray-400 text-sm">عرض الاتصالات</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-lg bg-violet-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-violet-400 font-bold">AR</span>
+                        </div>
+                        <h4 class="font-bold mb-1">Autoruns</h4>
+                        <p class="text-gray-400 text-sm">إدارة بدء التشغيل</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="system">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                        <span class="text-blue-400 font-bold text-xl">PM</span>
+                    </div>
+                    <h2 class="text-3xl font-bold">Process Monitor (Procmon)</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة متقدمة لمراقبة جميع العمليات في النظام، بما في ذلك الوصول للملفات والتسجيل والعمليات</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    مراقبة فورية للعمليات
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    فلترة متقدمة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تتبع العمليات والملفات
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف البرمجيات الخبيثة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تحليل سلوك البرامج
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://learn.microsoft.com/en-us/sysinternals/downloads/media/procmon/procmon.png" alt="واجهة Procmon" class="rounded-xl h-80 w-full object-contain bg-white border border-blue-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="system">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                        <span class="text-cyan-400 font-bold text-xl">RM</span>
+                    </div>
+                    <h2 class="text-3xl font-bold">RamMap</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لتحليل واستخدام الذاكرة الفعلية في النظام، مع عرض تفصيلي لتوزيع الذاكرة</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض تفصيلي للذاكرة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحليل استخدام العمليات
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إدارة الذاكرة
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف تسرب الذاكرة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تحليل البرمجيات الخبيثة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://learn.microsoft.com/en-us/sysinternals/downloads/media/rammap/rammap.png" alt="واجهة RamMap" class="rounded-xl h-80 w-full object-contain bg-white border border-cyan-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="system">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                        <span class="text-indigo-400 font-bold text-xl">TV</span>
+                    </div>
+                    <h2 class="text-3xl font-bold">TCPView</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لعرض جميع الاتصالات النشطة والمنافذ المفتوحة مع تحديد العملية المسؤولة</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض الاتصالات الفورية
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحديد العملية لكل اتصال
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إنهاء الاتصالات
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف الاتصالات المشبوهة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تتبع البرمجيات الخبيثة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://learn.microsoft.com/en-us/sysinternals/downloads/media/tcpview/tcpview.png" alt="واجهة TCPView" class="rounded-xl h-80 w-full object-contain bg-white border border-indigo-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="system">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                        <span class="text-violet-400 font-bold text-xl">AR</span>
+                    </div>
+                    <h2 class="text-3xl font-bold">Autoruns</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لعرض جميع البرامج والخدمات التي تعمل تلقائياً عند بدء تشغيل النظام</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض شامل لبرامج البدء
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إخفاء إدخالات مايكروسوفت
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    التحقق من التوقيع الرقمي
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف البرمجيات الخبيثة المستمرة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تحليل نقاط الاستمرارية
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://learn.microsoft.com/en-us/sysinternals/downloads/media/autoruns/autoruns.png" alt="واجهة Autoruns" class="rounded-xl h-80 w-full object-contain bg-white border border-violet-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="system">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">Event Viewer</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة مدمجة في ويندوز لعرض سجلات النظام والأحداث مع تصنيفها حسب النوع والمصدر</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تسجيل جميع الأحداث
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض الأخطاء والتحذيرات
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تتبع زمني دقيق
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    إعادة بناء الأحداث
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تقديم أدلة زمنية
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://upload.wikimedia.org/wikipedia/en/9/91/Event_Viewer_Windows_10.png" alt="واجهة Event Viewer" class="rounded-xl h-80 w-full object-contain bg-white border border-blue-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="evidence">
+            <div class="max-w-4xl w-full text-center">
+                <div class="inline-block px-4 py-2 rounded-full bg-indigo-500/20 text-indigo-300 text-sm mb-6">
+                    المحور الثالث
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black mb-6">
+                    الأدلة <span class="text-indigo-400">الرقمية</span>
+                </h2>
+                <p class="text-xl text-gray-400 mb-8">مفهوم الأدلة الرقمية وأهميتها في التحقيق</p>
+                <div class="card-glass rounded-2xl p-8 text-right max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">استعادة البيانات المحذوفة</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">إنشاء نسخ جنائية من الأدلة</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">الحفاظ على سلامة الدليل</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">ضمان قبول الأدلة قانونياً</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="evidence">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">Disk Digger</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لاستعادة الملفات المحذوفة من مختلف أنواع الأقراص ووسائط التخزين</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    استرجاع من أقراص مختلفة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    دعم عدة صيغ ملفات
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    لا تحتاج تثبيت
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    استعادة الأدلة المحذوفة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف محاولات الإخفاء
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://diskdigger.org/img/dd-main-preview.png" alt="واجهة Disk Digger" class="rounded-xl h-80 w-full object-contain bg-white border border-indigo-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="evidence">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">FTK Imager</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة احترافية لإنشاء نسخة جنائية (Forensic Image) من الأقراص والوسائط التخزينية</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إنشاء Image مطابق
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    حساب قيم الهاش
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    الحفاظ على سلامة البيانات
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    ضمان قبول الأدلة قانونياً
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    منع التلاعب بالدليل
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://www.exterro.com/images/uploads/images/FTK-Imager-UI.png" alt="واجهة FTK Imager" class="rounded-xl h-80 w-full object-contain bg-white border border-cyan-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="evidence">
+            <div class="max-w-5xl w-full">
+                <h2 class="text-3xl font-bold mb-8 text-center">
+                    خطوات <span class="text-cyan-400">التصوير الجنائي</span>
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card-glass rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-cyan-300 mb-4">خطوات إنشاء Image</h3>
+                        <ol class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <span class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 font-bold">1</span>
+                                <div>
+                                    <h4 class="font-bold">اختيار المصدر</h4>
+                                    <p class="text-gray-400 text-sm">تحديد القرص أو الوسيطة المراد تصويرها</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 font-bold">2</span>
+                                <div>
+                                    <h4 class="font-bold">اختيار الوجهة</h4>
+                                    <p class="text-gray-400 text-sm">تحديد موقع حفظ ملف الـ Image</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 font-bold">3</span>
+                                <div>
+                                    <h4 class="font-bold">إنشاء الـ Hash</h4>
+                                    <p class="text-gray-400 text-sm">حساب MD5/SHA1 للتحقق من السلامة</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 font-bold">4</span>
+                                <div>
+                                    <h4 class="font-bold">التوثيق</h4>
+                                    <p class="text-gray-400 text-sm">توثيق جميع الخطوات والتفاصيل</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <div class="card-glass rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-green-300 mb-4">الحفاظ على سلامة الدليل</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span class="text-gray-300">عدم العمل على الدليل الأصلي مباشرة</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span class="text-gray-300">استخدام أجهزة كتابة محمية (Write Blocker)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span class="text-gray-300">التحقق من قيم Hash بعد النسخ</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span class="text-gray-300">توثيق سلسلة الحيازة (Chain of Custody)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="evidence">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">EnCase</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">منصة متكاملة احترافية لإدارة وتحليل الأدلة الرقمية في التحقيقات الجنائية</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إدارة القضايا والأدلة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحليل البيانات المتقدم
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إنشاء تقارير احترافية
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تسهيل التحقيق الرقمي
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تقارير مقبولة قانونياً
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://upload.wikimedia.org/wikipedia/en/6/6b/Encase.jpg" alt="EnCase" class="rounded-xl h-80 w-full object-contain bg-white border border-violet-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="evidence">
+            <div class="max-w-5xl w-full">
+                <h2 class="text-3xl font-bold mb-8 text-center">
+                    إدارة <span class="text-violet-400">القضايا الرقمية</span>
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="tool-card rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold">تنظيم الأدلة</h3>
+                        </div>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                                تصنيف الأدلة حسب النوع
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                                ربط الأدلة بالقضية
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                                تتبع مصدر كل دليل
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tool-card rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold">التوثيق</h3>
+                        </div>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                توثيق جميع الإجراءات
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                إنشاء تقارير التحقيق
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                حفظ سلسلة الحيازة
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="evidence">
+            <div class="max-w-5xl w-full">
+                <h2 class="text-3xl font-bold mb-8 text-center">
+                    مثال <span class="text-indigo-400">تطبيقي</span>
+                </h2>
+                
+                <div class="card-glass rounded-2xl p-6 mb-6">
+                    <h3 class="text-xl font-bold text-indigo-300 mb-4">سيناريو تحقيق: اختراق نظام</h3>
+                    <p class="text-gray-300 mb-4">تم الإبلاغ عن اختراق خادم الشركة. كيف نتعامل مع الموقف؟</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-blue-400 font-bold">1</span>
+                        </div>
+                        <h4 class="font-bold mb-2">العزل</h4>
+                        <p class="text-gray-400 text-sm">عزل النظام المصاب عن الشبكة</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-cyan-400 font-bold">2</span>
+                        </div>
+                        <h4 class="font-bold mb-2">التصوير</h4>
+                        <p class="text-gray-400 text-sm">إنشاء نسخة جنائية من القرص</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-indigo-400 font-bold">3</span>
+                        </div>
+                        <h4 class="font-bold mb-2">التحليل</h4>
+                        <p class="text-gray-400 text-sm">تحليل السجلات والملفات</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-full bg-violet-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-violet-400 font-bold">4</span>
+                        </div>
+                        <h4 class="font-bold mb-2">التتبع</h4>
+                        <p class="text-gray-400 text-sm">تتبع مصدر الهجوم</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-blue-400 font-bold">5</span>
+                        </div>
+                        <h4 class="font-bold mb-2">التوثيق</h4>
+                        <p class="text-gray-400 text-sm">توثيق جميع النتائج</p>
+                    </div>
+                    <div class="tool-card rounded-xl p-4 text-center">
+                        <div class="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-cyan-400 font-bold">6</span>
+                        </div>
+                        <h4 class="font-bold mb-2">التقرير</h4>
+                        <p class="text-gray-400 text-sm">إعداد التقرير النهائي</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="files">
+            <div class="max-w-4xl w-full text-center">
+                <div class="inline-block px-4 py-2 rounded-full bg-violet-500/20 text-violet-300 text-sm mb-6">
+                    المحور الرابع
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black mb-6">
+                    فحص <span class="text-violet-400">الملفات</span>
+                </h2>
+                <p class="text-xl text-gray-400 mb-8">أهمية تحليل الملفات وسلوك المستخدم</p>
+                <div class="card-glass rounded-2xl p-8 text-right max-w-2xl mx-auto">
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">تحليل الملفات التنفيذية</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">فحص سجل التصفح</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">كشف البيانات المشفرة</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-violet-400 mt-2 flex-shrink-0"></span>
+                            <span class="text-gray-300">تحليل سلوك المستخدم</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="files">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">VeraCrypt</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة مجانية ومفتوحة المصدر لتشفير البيانات وإنشاء أقراص افتراضية مشفرة</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تشفير قوي (AES, Serpent, Twofish)
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إنشاء أقراص افتراضية مشفرة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    إخفاء الأحجام (Hidden Volumes)
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    حماية البيانات الحساسة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    فهم طرق إخفاء الأدلة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://www.veracrypt.fr/en/img/VeraCrypt_Volume_Creation_Wizard_1.png" alt="واجهة VeraCrypt" class="rounded-xl h-80 w-full object-contain bg-[#f0f0f0] border border-violet-500/20 shadow-lg p-2">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="files">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">Browser History Examiner</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لتحليل سجل التصفح واستخراج المعلومات من متصفحات الويب المختلفة</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    استخراج المواقع والمواقع
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض النشاط الزمني
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    دعم متصفحات متعددة
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    معرفة سلوك المستخدم
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف الأنشطة المشبوهة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://foxtonforensics.com/img/bhe-main.png" alt="واجهة Browser History Examiner" class="rounded-xl h-80 w-full object-contain bg-white border border-cyan-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="files">
+            <div class="max-w-6xl w-full">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold">PE Explorer</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-300 mb-3">الشرح</h3>
+                            <p class="text-gray-300">أداة لتحليل الملفات التنفيذية (EXE/DLL) وفحص بنيتها الداخلية دون تشغيلها</p>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-cyan-300 mb-3">الميزات</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحليل بنية PE Header
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    عرض الدوال والموارد
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                    تحليل الـ Imports/Exports
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tool-card rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-green-300 mb-3">الأهمية</h3>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    كشف البرمجيات الضارة
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                                    تحليل دون تشغيل
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="https://www.heaventools.com/image/pe-explorer.png" alt="واجهة PE Explorer" class="rounded-xl h-80 w-full object-contain bg-white border border-indigo-500/20 shadow-lg p-1">
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="files">
+            <div class="max-w-5xl w-full">
+                <h2 class="text-3xl font-bold mb-8 text-center">
+                    تحليل <span class="text-violet-400">سلوك المستخدم</span>
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="card-glass rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-violet-300 mb-4">أمثلة على التحليل</h3>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-400 mt-2"></span>
+                                مواقع الويب التي زارها المستخدم
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-400 mt-2"></span>
+                                الملفات التي تم تحميلها
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-400 mt-2"></span>
+                                أوقات النشاط
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-violet-400 mt-2"></span>
+                                الاتصالات الشبكية
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-glass rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-cyan-300 mb-4">الأدوات المستخدمة</h3>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2"></span>
+                                Browser History Examiner
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2"></span>
+                                Event Viewer
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2"></span>
+                                Procmon
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-2"></span>
+                                Encase
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="files">
+            <div class="max-w-5xl w-full">
+                <h2 class="text-3xl font-bold mb-8 text-center">
+                    ربط <span class="text-blue-400">الأدوات معاً</span>
+                </h2>
+                
+                <div class="card-glass rounded-2xl p-6 mb-6">
+                    <p class="text-gray-300 text-center text-lg">كيف تعمل الأدوات ضمن تحقيق واحد متكامل</p>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="tool-card rounded-xl p-4 text-center w-36">
+                        <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mx-auto mb-2">
+                            <span class="text-blue-400 text-xs font-bold">NET</span>
+                        </div>
+                        <h4 class="font-bold text-sm">تحليل الشبكة</h4>
+                        <p class="text-gray-500 text-xs">Wireshark + Nmap</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="tool-card rounded-xl p-4 text-center w-36">
+                        <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mx-auto mb-2">
+                            <span class="text-cyan-400 text-xs font-bold">SYS</span>
+                        </div>
+                        <h4 class="font-bold text-sm">مراقبة النظام</h4>
+                        <p class="text-gray-500 text-xs">Sysinternals</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="tool-card rounded-xl p-4 text-center w-36">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center mx-auto mb-2">
+                            <span class="text-indigo-400 text-xs font-bold">EV</span>
+                        </div>
+                        <h4 class="font-bold text-sm">الأدلة الرقمية</h4>
+                        <p class="text-gray-500 text-xs">FTK + EnCase</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="tool-card rounded-xl p-4 text-center w-36">
+                        <div class="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center mx-auto mb-2">
+                            <span class="text-violet-400 text-xs font-bold">FILE</span>
+                        </div>
+                        <h4 class="font-bold text-sm">تحليل الملفات</h4>
+                        <p class="text-gray-500 text-xs">PE + Browser</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide flex-col items-center justify-center h-screen p-8" data-section="conclusion">
+            <div class="max-w-4xl w-full text-center">
+                <div class="inline-block px-4 py-2 rounded-full bg-green-500/20 text-green-300 text-sm mb-6">
+                    الخاتمة
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black mb-8">
+                    أهمية <span class="text-green-400">التحقيق الرقمي</span>
+                </h2>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="tool-card rounded-2xl p-6 text-center">
+                        <div class="icon-box w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 pulse-animation">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold mb-2">كشف الجرائم</h3>
+                        <p class="text-gray-400 text-sm">الأدلة الرقمية تلعب دوراً محورياً في كشف الجرائم الإلكترونية</p>
+                    </div>
+                    
+                    <div class="tool-card rounded-2xl p-6 text-center">
+                        <div class="icon-box w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 pulse-animation">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold mb-2">دور الأدوات</h3>
+                        <p class="text-gray-400 text-sm">الأدوات تسهل عمليات التحقيق وتزيد من دقته وسرعته</p>
+                    </div>
+                    
+                    <div class="tool-card rounded-2xl p-6 text-center">
+                        <div class="icon-box w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 pulse-animation">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold mb-2">التطبيق العملي</h3>
+                        <p class="text-gray-400 text-sm">ربط الجانب النظري بالممارسة العملية في المقرر</p>
+                    </div>
+                </div>
+                
+                <div class="card-glass rounded-2xl p-6">
+                    <p class="text-xl text-gray-300">
+                        شكراً لحسن استماعكم
+                    </p>
+                    <p class="text-gray-400 mt-2">
+                        إعداد: أ. أحمد عوني النتشة | جامعة القدس المفتوحة
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize variables first
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progressBar = document.getElementById('progressBar');
+        const currentSlideDisplay = document.getElementById('currentSlide');
+        const slideDotsContainer = document.getElementById('slideDots');
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            if (!container) return;
+            
+            const particleCount = 20;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Create slide dots
+        function createSlideDots() {
+            if (!slideDotsContainer) return;
+            
+            slideDotsContainer.innerHTML = '';
+            for (let i = 0; i < Math.min(totalSlides, 20); i++) {
+                const dot = document.createElement('button');
+                dot.className = `w-2 h-2 rounded-full transition-all ${i === currentSlideIndex ? 'bg-blue-500 w-4' : 'bg-gray-600'}`;
+                dot.onclick = () => goToSlide(i);
+                dot.setAttribute('aria-label', `الانتقال للشريحة ${i + 1}`);
+                slideDotsContainer.appendChild(dot);
+            }
+        }
+
+        // Update slide display
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlideIndex) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Update progress bar
+            const progress = ((currentSlideIndex + 1) / totalSlides) * 100;
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+
+            // Update slide counter
+            if (currentSlideDisplay) {
+                currentSlideDisplay.textContent = currentSlideIndex + 1;
+            }
+
+            // Update dots
+            const dots = slideDotsContainer ? slideDotsContainer.querySelectorAll('button') : [];
+            dots.forEach((dot, index) => {
+                dot.className = `w-2 h-2 rounded-full transition-all ${index === currentSlideIndex ? 'bg-blue-500 w-4' : 'bg-gray-600'}`;
+            });
+        }
+
+        // Navigation functions
+        function nextSlide() {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                updateSlide();
+            }
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                currentSlideIndex = index;
+                updateSlide();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides - 1);
+            }
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - next slide (RTL)
+                    nextSlide();
+                } else {
+                    // Swipe right - prev slide (RTL)
+                    prevSlide();
+                }
+            }
+        }
+
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            createSlideDots();
+            updateSlide();
+        });
+
+        // Respect reduced motion preference
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const particles = document.getElementById('particles');
+            if (particles) {
+                particles.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

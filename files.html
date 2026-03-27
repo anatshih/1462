@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحور الرابع: فحص الملفات - التحقيقات والأدلة الرقمية</title>
+    <style>
+        /* إعدادات عامة */
+        :root {
+            --primary-bg: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --accent-color: #2563eb;
+            --text-main: #334155;
+            --text-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info-bg: #eff6ff;
+            --info-border: #3b82f6;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-main); }
+        
+        /* القائمة الجانبية */
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; overflow-y: auto; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 2px solid var(--accent-color); background-color: #0f172a; }
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+        .nav-group { padding: 15px 20px 5px; font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li a { display: block; padding: 12px 20px; color: var(--text-light); text-decoration: none; border-right: 4px solid transparent; transition: 0.2s; }
+        .sidebar-menu li a:hover { background-color: var(--sidebar-hover); }
+        .sidebar-menu li a.active { background-color: var(--sidebar-hover); border-right-color: var(--accent-color); font-weight: bold; }
+
+        /* المحتوى الرئيسي */
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; scroll-behavior: smooth; }
+        .page-title { color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        .content-card { background-color: var(--card-bg); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .content-card h2 { color: var(--accent-color); margin-top: 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; }
+        .content-card h3 { color: #475569; font-size: 1.1rem; }
+
+        /* صندوق الشرح الجنائي */
+        .forensic-note { background: var(--info-bg); border-right: 4px solid var(--info-border); padding: 15px; font-family: 'Segoe UI', sans-serif; font-size: 14px; direction: rtl; color: #1e3a8a; border-radius: 4px; margin-top: 15px; line-height: 1.6;}
+        .forensic-note strong { color: #1d4ed8; }
+
+        /* مؤشرات الخطر */
+        .alert-box { background: #fef2f2; border-right: 4px solid var(--danger); padding: 15px; border-radius: 5px; margin-bottom: 15px; font-size: 0.95rem; }
+        .alert-box h4 { color: var(--danger); margin: 0 0 5px 0; }
+
+        /* أزرار المحاكيات */
+        .sim-btn { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; font-family: 'Segoe UI', sans-serif; }
+        .sim-btn:hover { background: #1d4ed8; }
+
+        /* محاكي VeraCrypt */
+        .vc-gui { border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; padding: 25px; text-align: center; }
+        .vc-volume-box { background: #e2e8f0; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-family: monospace; font-size: 15px; border: 1px dashed #94a3b8; display: inline-block; width: 80%; }
+        .vc-input { padding: 12px; width: 50%; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 15px; margin-bottom: 15px; text-align: center; }
+        .vc-files { display: none; margin-top: 20px; background: white; border: 2px solid var(--success); padding: 20px; border-radius: 5px; text-align: left; direction: ltr; }
+        .vc-error { color: var(--danger); font-weight: bold; display: none; margin-top: 10px; }
+
+        /* جداول عامة للمحاكيات */
+        table.sim-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; direction: ltr; background: white; border: 1px solid #cbd5e1; }
+        table.sim-table th { background: #f1f5f9; padding: 10px; border-bottom: 2px solid #cbd5e1; }
+        table.sim-table td { border-bottom: 1px solid #e2e8f0; padding: 8px; }
+        table.sim-table tr:hover { background: #f8fafc; }
+        .search-term { color: #d97706; font-weight: bold; }
+        .malicious-url { color: var(--danger); font-weight: bold; }
+
+        /* محاكي Browser History */
+        .bhe-toolbar { background: #f1f5f9; padding: 15px; border: 1px solid #cbd5e1; border-bottom: none; border-radius: 5px 5px 0 0; display: flex; gap: 10px; direction: ltr; }
+        .bhe-search { padding: 8px; border: 1px solid #cbd5e1; border-radius: 3px; flex: 1; font-size: 14px; }
+        .bhe-container { max-height: 250px; overflow-y: auto; border: 1px solid #cbd5e1; border-top: none; border-radius: 0 0 5px 5px; }
+
+        /* محاكي PE Explorer */
+        .pe-gui { border: 1px solid #cbd5e1; border-radius: 5px; background: white; display: flex; height: 320px; direction: ltr; overflow: hidden; }
+        .pe-sidebar { width: 25%; background: #f1f5f9; border-right: 1px solid #cbd5e1; display: flex; flex-direction: column; }
+        .pe-tab { padding: 15px; border-bottom: 1px solid #e2e8f0; cursor: pointer; font-weight: bold; color: #475569; }
+        .pe-tab:hover, .pe-tab.active { background: #e0f2fe; color: var(--accent-color); border-right: 4px solid var(--accent-color); }
+        .pe-content { flex: 1; padding: 15px; overflow-y: auto; background: #f8fafc; font-family: 'Courier New', monospace; font-size: 13px; }
+        .dll-bad { color: var(--danger); font-weight: bold; }
+        .pe-section { display: none; }
+        .pe-section.active { display: block; }
+
+        /* المختبر والتقييم */
+        .lab-section { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .question { margin-bottom: 20px; }
+        .question label { font-weight: bold; color: #166534; display: block; margin-bottom: 8px; }
+        .question input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box; font-size: 15px; }
+        .btn-submit { background: var(--accent-color); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .feedback { margin-top: 10px; padding: 15px; border-radius: 5px; display: none; line-height: 1.6; }
+        .feedback.correct { background: #d1fae5; border: 1px solid var(--success); }
+        .feedback.wrong { background: #fee2e2; border: 1px solid var(--danger); }
+        .explanation { border-top: 1px dashed #94a3b8; margin-top: 10px; padding-top: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>التحقيقات والأدلة الرقمية</h2>
+            <p style="margin:5px 0 0; font-size:0.9rem; color:#cbd5e1;">1462</p>
+        </div>
+        
+        <ul class="sidebar-menu" style="margin-top:10px;">
+            <li><a href="index.html">🏠 الصفحة الرئيسية</a></li>
+        </ul>
+
+        <div class="nav-group">المحور الرابع: فحص الملفات</div>
+        <ul class="sidebar-menu">
+            <li><a href="#section1">1. التشفير (VeraCrypt)</a></li>
+            <li><a href="#section2">2. سجلات التصفح (History)</a></li>
+            <li><a href="#section3">3. بنية الملفات (PE Explorer)</a></li>
+            <li><a href="#lab">🔬 المختبر الشامل للتقييم</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">المحور الرابع: فحص الملفات ونشاط المستخدم</h1>
+
+        <section id="section1" class="content-card">
+            <h2>1. التعامل مع الأقراص المشفرة (VeraCrypt)</h2>
+            <p>كثيراً ما يعمد المشتبه بهم إلى إخفاء بياناتهم الحساسة (مثل الحسابات المالية أو ملفات الاختراق) داخل ملفات مشفرة أو أقراص وهمية باستخدام برامج مثل VeraCrypt. هذه الملفات تبدو كبيانات عشوائية (Random Data) ولا يمكن فتحها إلا بكلمة المرور الصحيحة.</p>
+
+            <div class="alert-box">
+                <h4>⚠️ سيناريو المحقق</h4>
+                أثناء تفتيش مكتب المشتبه به، وجدت ملفاً غريباً على سطح المكتب بحجم 50MB بدون امتداد يحمل اسم <code>System_Backup</code>. كما وجدت ورقة ملاحظات (Sticky Note) صغيرة ملصقة أسفل لوحة المفاتيح مكتوب عليها الرقم السري: <b>12345</b>.
+            </div>
+
+            <h3>💻 محاكي VeraCrypt (فك التشفير)</h3>
+            <p>استخدم كلمة المرور التي عثرت عليها لفك تشفير الملف (Mount Volume) واكتشاف محتواه.</p>
+            
+            <div class="vc-gui">
+                <div class="vc-volume-box">
+                    📁 Selected Volume: C:\Users\Admin\Desktop\System_Backup
+                </div><br>
+                <input type="password" id="vc-pass" class="vc-input" placeholder="Enter Password..."><br>
+                <button class="sim-btn" onclick="mountVeraCrypt()">Mount Volume</button>
+                <div id="vc-error" class="vc-error">Incorrect password. Cannot mount volume.</div>
+                
+                <div id="vc-files" class="vc-files">
+                    <h3 style="color: var(--success); margin-top: 0;">Volume Mounted Successfully (Drive Z:)</h3>
+                    <table class="sim-table">
+                        <tr><th>File Name</th><th>Size</th><th>Type</th></tr>
+                        <tr><td>Stolen_Credit_Cards.xlsx</td><td>145 KB</td><td>Excel Spreadsheet</td></tr>
+                        <tr><td>Target_List.txt</td><td>12 KB</td><td>Text Document</td></tr>
+                        <tr><td>Backdoor_Payload.exe</td><td>2.1 MB</td><td>Executable</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="forensic-note" id="vc-note" style="display: none;">
+                <strong>🔍 التحليل الجنائي (VeraCrypt):</strong> بمجرد إدخال كلمة المرور الصحيحة (Mount)، يقوم البرنامج بإنشاء قرص وهمي (Virtual Drive) في النظام، مما يتيح للمحقق قراءة الملفات وفحصها. إثبات وجود هذه الملفات داخل حاوية مشفرة يؤكد نية المشتبه به في الإخفاء (Mens Rea / القصد الجنائي).
+            </div>
+        </section>
+
+        <section id="section2" class="content-card">
+            <h2>2. تحليل سجلات التصفح (Browser History)</h2>
+            <p>متصفحات الإنترنت (مثل Chrome و Edge) تحتفظ بسجلات التصفح، التحميلات، وعمليات البحث داخل قواعد بيانات من نوع <b>SQLite</b>. استخراج هذه القواعد وتحليلها يخبر المحقق بكل ما كان يبحث عنه المشتبه به، مما يساعد في ربط الأحداث.</p>
+
+            <h3>💻 محاكي Browser History Examiner</h3>
+            <p>قمت باستخراج ملف <code>History</code> الخاص بمتصفح Chrome للمشتبه به. تصفح الجدول أو استخدم شريط البحث بكلمة <code>wipe</code> لترى ما كان يبحث عنه.</p>
+            
+            <div class="bhe-toolbar">
+                <span style="font-weight:bold; padding-top:8px;">Search:</span>
+                <input type="text" id="bhe-search" class="bhe-search" placeholder="Type to filter URLs or search terms..." onkeyup="filterHistory()">
+            </div>
+            <div class="bhe-container">
+                <table class="sim-table" id="bhe-table">
+                    <thead>
+                        <tr><th>Time (UTC)</th><th>Type</th><th>URL / Term</th><th>Visit Count</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>2026-03-26 14:10:22</td><td>Visit</td><td>https://www.google.com</td><td>45</td></tr>
+                        <tr><td>2026-03-26 14:11:05</td><td>Search</td><td class="search-term">how to hide files permanently</td><td>1</td></tr>
+                        <tr><td>2026-03-26 14:15:30</td><td>Visit</td><td>https://www.veracrypt.fr/en/Downloads.html</td><td>2</td></tr>
+                        <tr><td>2026-03-27 09:20:11</td><td>Search</td><td class="search-term">wipe hard drive forensic tools</td><td>1</td></tr>
+                        <tr><td>2026-03-27 09:25:00</td><td>Visit</td><td class="malicious-url">http://dark-hacker-tools.net/wipe_tool.exe</td><td>1</td></tr>
+                        <tr><td>2026-03-27 10:00:15</td><td>Visit</td><td>https://mail.google.com</td><td>120</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="forensic-note">
+                <strong>🔍 التحليل الجنائي (Browser History):</strong> سجلات البحث (Search) تظهر الكلمات الدلالية التي كتبها المشتبه به في محرك جوجل. بحثه عن "كيفية مسح القرص الصلب نهائياً" وتحميله لملفات مسح البيانات (Wipe Tools) هو دليل قاطع على محاولة طمس الأدلة وإعاقة التحقيق (Anti-Forensics).
+            </div>
+        </section>
+
+        <section id="section3" class="content-card">
+            <h2>3. تحليل بنية الملفات التنفيذية (PE Explorer)</h2>
+            <p>عندما يجد المحقق ملفاً تنفيذياً (<code>.exe</code>) مشبوهاً، فإنه لا يقوم بتشغيله أبداً لتجنب إصابة جهازه! بدلاً من ذلك، يستخدم برامج مثل <b>PE Explorer</b> للقيام بتحليل ساكن (Static Analysis) لبنية الملف (Portable Executable) لمعرفة وظائفه من خلال المكتبات (DLLs) التي يعتمد عليها.</p>
+
+            <h3>💻 محاكي PE Explorer</h3>
+            <p>نقوم الآن بتحليل الملف <code>update.exe</code> الذي وجدناه في المحور الثاني. تنقل بين التبويبات اليسرى لاكتشاف خصائص الملف.</p>
+            
+            <div class="pe-gui">
+                <div class="pe-sidebar">
+                    <div class="pe-tab active" onclick="showPeTab('headers', this)">📄 PE Headers</div>
+                    <div class="pe-tab" onclick="showPeTab('sections', this)">🧩 Sections (.text, .data)</div>
+                    <div class="pe-tab" onclick="showPeTab('imports', this)">📥 Imports (DLLs)</div>
+                </div>
+                <div class="pe-content">
+                    <div id="pe-headers" class="pe-section active">
+                        <b>IMAGE_NT_HEADERS</b><br>
+                        Signature: 50 45 00 00 (PE)<br>
+                        Machine: 0x014C (Intel 386)<br>
+                        Time Date Stamp: 0x65F9A1B2 (Sun Mar 15 14:22:10 2026)<br>
+                        Subsystem: Windows GUI<br>
+                        Characteristics: Executable Image, 32-bit word machine<br><br>
+                        <i>المحقق يقرأ هنا أن الملف هو برنامج ويندوز تنفيذي حقيقي تم تصميمه للعمل في الخلفية (GUI) دون نافذة أوامر تفضح أمره.</i>
+                    </div>
+                    <div id="pe-sections" class="pe-section">
+                        <b>IMAGE_SECTION_HEADER</b><br><br>
+                        Name: <b>.text</b> (Contains Executable Code)<br>
+                        Virtual Size: 0x0001A240<br>
+                        Characteristics: 0x60000020 (Code, Execute, Read)<br><br>
+                        Name: <b>.data</b> (Contains Initialized Data)<br>
+                        Virtual Size: 0x00005100<br><br>
+                        Name: <b>.rsrc</b> (Contains Resources / Icons)<br>
+                        <i>المحقق يتأكد هنا أن قسم .text يحتوي على الكود البرمجي الذي سينفذه المعالج.</i>
+                    </div>
+                    <div id="pe-imports" class="pe-section">
+                        <b>IMPORTED LIBRARIES (Dependencies)</b><br><br>
+                        <u>KERNEL32.dll</u><br>
+                        - CreateFileA<br>
+                        - WriteFile<br><br>
+                        <u class="dll-bad">WS2_32.dll (Windows Sockets)</u><br>
+                        - WSAStartup<br>
+                        - socket<br>
+                        - connect<br>
+                        - send / recv<br><br>
+                        <u>ADVAPI32.dll</u><br>
+                        - RegSetValueExA<br><br>
+                        <i>المحقق يستنتج: لماذا يحتاج برنامج "تحديث" بسيط إلى مكتبة (WS2_32.dll) الخاصة بالاتصال الشبكي وإرسال واستقبال البيانات، ومكتبة (ADVAPI) لتعديل سجل الويندوز؟ هذا سلوك فايروس (Trojan)!</i>
+                    </div>
+                </div>
+            </div>
+            <div class="forensic-note">
+                <strong>🔍 التحليل الجنائي (PE Analysis):</strong> قسم <b>Imports</b> هو الأهم. من خلال رؤية الدوال التي يستدعيها البرنامج (مثل <code>socket</code> و <code>connect</code>)، يستطيع المحقق إثبات أن هذا البرنامج مصمم للاتصال بالإنترنت وفتح قنوات اتصال (Backdoors)، كل ذلك دون الحاجة لتشغيل البرنامج فعلياً.
+            </div>
+        </section>
+
+        <section id="lab" class="content-card lab-section">
+            <h2>🔬 المختبر الشامل للمحور الرابع</h2>
+            <p>أجب عن الأسئلة الجنائية التالية لاختبار فهمك لأدوات فحص الملفات:</p>
+
+            <div class="question">
+                <label>1. في برنامج VeraCrypt، ماذا يبدو شكل الملف المشفر (Container) لمن لا يمتلك كلمة المرور؟</label>
+                <input type="text" id="q1" placeholder="اكتب (بيانات عشوائية) أو (ملف نصي)...">
+                <div id="fb1" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>2. ما هو نوع قاعدة البيانات (Database Type) التي تستخدمها متصفحات الإنترنت مثل Chrome لحفظ سجلات التصفح (History)؟</label>
+                <input type="text" id="q2" placeholder="اكتب اسم نوع قاعدة البيانات بالإنجليزية (مثال: Oracle, SQLite)...">
+                <div id="fb2" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>3. في محاكي Browser History، ما هي الكلمة التي بحث عنها المشتبه به وتدل على محاولته طمس الأدلة؟</label>
+                <input type="text" id="q3" placeholder="اكتب الكلمة بالإنجليزية كما وردت في المحاكي...">
+                <div id="fb3" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>4. في برنامج PE Explorer، أي قسم (Section) من أقسام الملف التنفيذي يحتوي على الكود البرمجي الذي سينفذه المعالج (Executable Code)؟</label>
+                <input type="text" id="q4" placeholder="أدخل اسم القسم (مثال: .data, .text)...">
+                <div id="fb4" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>5. في برنامج PE Explorer (في تبويب Imports)، ما هو اسم المكتبة (DLL) التي أثبتت لنا أن البرنامج يقوم بالاتصال بالشبكة والإنترنت؟</label>
+                <input type="text" id="q5" placeholder="اكتب اسم المكتبة مع الامتداد (مثال: kernel32.dll)...">
+                <div id="fb5" class="feedback"></div>
+            </div>
+
+            <button class="btn-submit" onclick="evaluateLab()">تحقق من إجاباتك كافة واعرض التفسير الجنائي</button>
+        </section>
+
+    </main>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. منطق محاكي VeraCrypt
+        // ----------------------------------------------------
+        function mountVeraCrypt() {
+            const pass = document.getElementById('vc-pass').value;
+            const error = document.getElementById('vc-error');
+            const files = document.getElementById('vc-files');
+            const note = document.getElementById('vc-note');
+
+            if(pass === '12345') {
+                error.style.display = 'none';
+                files.style.display = 'block';
+                note.style.display = 'block';
+            } else {
+                files.style.display = 'none';
+                note.style.display = 'none';
+                error.style.display = 'block';
+            }
+        }
+
+        // ----------------------------------------------------
+        // 2. منطق محاكي Browser History
+        // ----------------------------------------------------
+        function filterHistory() {
+            const input = document.getElementById('bhe-search').value.toLowerCase();
+            const table = document.getElementById('bhe-table');
+            const trs = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < trs.length; i++) {
+                let text = trs[i].textContent.toLowerCase();
+                if (text.includes(input)) {
+                    trs[i].style.display = '';
+                } else {
+                    trs[i].style.display = 'none';
+                }
+            }
+        }
+
+        // ----------------------------------------------------
+        // 3. منطق محاكي PE Explorer
+        // ----------------------------------------------------
+        function showPeTab(tabId, element) {
+            document.querySelectorAll('.pe-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.pe-section').forEach(s => s.classList.remove('active'));
+            
+            element.classList.add('active');
+            document.getElementById('pe-' + tabId).classList.add('active');
+        }
+
+        // ----------------------------------------------------
+        // 4. تقييم المختبر الشامل والتفسير الجنائي
+        // ----------------------------------------------------
+        function evaluateLab() {
+            const q1 = document.getElementById('q1').value.trim();
+            const q2 = document.getElementById('q2').value.trim().toLowerCase();
+            const q3 = document.getElementById('q3').value.trim().toLowerCase();
+            const q4 = document.getElementById('q4').value.trim().toLowerCase();
+            const q5 = document.getElementById('q5').value.trim().toLowerCase();
+            
+            // Q1: VeraCrypt Random Data
+            const fb1 = document.getElementById('fb1');
+            fb1.style.display = 'block';
+            if(q1.includes('عشوائي') || q1.includes('عشوائية')) {
+                fb1.className = 'feedback correct';
+                fb1.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> قوة برامج التشفير تكمن في جعل الملف المشفر يبدو كبيانات عشوائية (Random Data) تماماً ولا يحتوي على أي توقيع (Signature) يدل على محتواه الحقيقي.</div>`;
+            } else {
+                fb1.className = 'feedback wrong';
+                fb1.innerHTML = `❌ <b>خاطئ. الإجابة هي: بيانات عشوائية</b><div class="explanation"><b>التفسير:</b> الملف المشفر لا يظهر كملف نصي أو ملف عادي، بل يبدو ككتلة من البيانات العشوائية غير المفهومة.</div>`;
+            }
+
+            // Q2: SQLite
+            const fb2 = document.getElementById('fb2');
+            fb2.style.display = 'block';
+            if(q2 === 'sqlite') {
+                fb2.className = 'feedback correct';
+                fb2.innerHTML = `✅ <b>صحيح ممتاز.</b><div class="explanation"><b>التفسير:</b> المتصفحات الحديثة تحفظ السجلات (History) في ملفات قواعد بيانات خفيفة من نوع SQLite، ويمكن للمحقق استخراجها وقراءتها ببرامج متخصصة.</div>`;
+            } else {
+                fb2.className = 'feedback wrong';
+                fb2.innerHTML = `❌ <b>خاطئ. الإجابة هي: SQLite</b><div class="explanation"><b>التفسير:</b> المتصفحات تستخدم قواعد بيانات SQLite الخفيفة لحفظ سجلات التصفح.</div>`;
+            }
+
+            // Q3: Wipe
+            const fb3 = document.getElementById('fb3');
+            fb3.style.display = 'block';
+            if(q3.includes('wipe')) {
+                fb3.className = 'feedback correct';
+                fb3.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> الكلمة (Wipe) تعني المسح النهائي والآمن للبيانات. بحث المشتبه به عن هذه الكلمة يدل على قصده في تدمير الأدلة الرقمية (Anti-Forensics).</div>`;
+            } else {
+                fb3.className = 'feedback wrong';
+                fb3.innerHTML = `❌ <b>خاطئ. الإجابة مرتبطة بكلمة: wipe</b><div class="explanation"><b>التفسير:</b> بالرجوع لجدول السجلات، ستجد أن المشتبه به بحث عن "wipe hard drive forensic tools".</div>`;
+            }
+
+            // Q4: .text
+            const fb4 = document.getElementById('fb4');
+            fb4.style.display = 'block';
+            if(q4 === '.text' || q4 === 'text') {
+                fb4.className = 'feedback correct';
+                fb4.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> في بنية الـ PE، القسم المسمى <b>.text</b> هو الذي يحتوي على الأوامر البرمجية (Code) التي ستُرسل للمعالج، بينما .data يحتوي على المتغيرات.</div>`;
+            } else {
+                fb4.className = 'feedback wrong';
+                fb4.innerHTML = `❌ <b>خاطئ. الإجابة هي: .text</b><div class="explanation"><b>التفسير:</b> بالرجوع لتبويب Sections في المحاكي، ستجد أن قسم .text هو الحاوي على الـ Executable Code.</div>`;
+            }
+
+            // Q5: ws2_32.dll
+            const fb5 = document.getElementById('fb5');
+            fb5.style.display = 'block';
+            if(q5 === 'ws2_32.dll' || q5 === 'ws2_32') {
+                fb5.className = 'feedback correct';
+                fb5.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> مكتبة <b>WS2_32.dll</b> (Windows Sockets) هي المسؤولة عن اتصالات الشبكة والإنترنت في الويندوز. استدعاء برنامج وهمي لها يثبت أنه يتواصل مع خوادم خارجية.</div>`;
+            } else {
+                fb5.className = 'feedback wrong';
+                fb5.innerHTML = `❌ <b>خاطئ. الإجابة هي: ws2_32.dll</b><div class="explanation"><b>التفسير:</b> بالرجوع لتبويب Imports، ستجد مكتبة WS2_32.dll مظللة بالأحمر وهي المسؤولة عن دوال الشبكة مثل socket و connect.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

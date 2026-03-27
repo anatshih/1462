@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحور الثاني: النظام والسجلات - التحقيقات والأدلة الرقمية</title>
+    <style>
+        /* إعدادات عامة مطابقة للمنصة */
+        :root {
+            --primary-bg: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --accent-color: #2563eb;
+            --text-main: #334155;
+            --text-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info-bg: #eff6ff;
+            --info-border: #3b82f6;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-main); }
+        
+        /* القائمة الجانبية */
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 2px solid var(--accent-color); background-color: #0f172a; }
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+        .nav-group { padding: 15px 20px 5px; font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li a { display: block; padding: 12px 20px; color: var(--text-light); text-decoration: none; border-right: 4px solid transparent; }
+        .sidebar-menu li a:hover { background-color: var(--sidebar-hover); }
+        .sidebar-menu li a.active { background-color: var(--sidebar-hover); border-right-color: var(--accent-color); font-weight: bold; }
+
+        /* المحتوى الرئيسي */
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; scroll-behavior: smooth; }
+        .page-title { color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        .content-card { background-color: var(--card-bg); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .content-card h2 { color: var(--accent-color); margin-top: 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; }
+        .content-card h3 { color: #475569; font-size: 1.1rem; }
+
+        /* التبويبات (Tabs) لمحاكي Sysinternals */
+        .tabs { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 15px; }
+        .tab-btn { background: none; border: none; padding: 10px 20px; cursor: pointer; font-size: 15px; font-weight: bold; color: #64748b; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .tab-btn:hover { color: var(--accent-color); }
+        .tab-btn.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
+        .tab-content { display: none; background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 0 0 5px 5px; height: auto; direction: ltr; font-family: 'Courier New', monospace; font-size: 13px; }
+        .tab-content.active { display: block; }
+        
+        /* جداول المحاكيات */
+        table.sim-table { width: 100%; border-collapse: collapse; text-align: left; background: white; margin-bottom: 15px; }
+        table.sim-table th { background: #e2e8f0; padding: 8px; position: sticky; top: 0; }
+        table.sim-table td { padding: 8px; border-bottom: 1px solid #f1f5f9; }
+        table.sim-table tr:hover { background: #f1f5f9; }
+        .suspicious { background-color: #fee2e2 !important; color: #991b1b; font-weight: bold; }
+
+        /* صندوق الشرح الجنائي داخل التبويبات */
+        .forensic-note { background: var(--info-bg); border-right: 4px solid var(--info-border); padding: 12px; font-family: 'Segoe UI', sans-serif; font-size: 14px; direction: rtl; color: #1e3a8a; border-radius: 4px; }
+        .forensic-note strong { color: #1d4ed8; }
+
+        /* محاكي Event Viewer */
+        .ev-gui { border: 1px solid #cbd5e1; display: flex; height: 350px; background: white; direction: ltr; font-family: 'Segoe UI', sans-serif; border-radius: 5px; overflow: hidden; margin-bottom: 15px; }
+        .ev-sidebar { width: 200px; border-right: 1px solid #cbd5e1; background: #f1f5f9; overflow-y: auto; }
+        .ev-item { padding: 10px 15px; cursor: pointer; font-size: 13px; color: #333; border-bottom: 1px solid #e2e8f0; }
+        .ev-item:hover { background: #e2e8f0; }
+        .ev-item.active { background: #cbd5e1; font-weight: bold; border-left: 4px solid var(--accent-color); }
+        .ev-main { flex: 1; display: flex; flex-direction: column; }
+        .ev-table-container { flex: 1; overflow-y: auto; }
+        .ev-details { height: 120px; border-top: 1px solid #cbd5e1; background: #f8fafc; padding: 15px; font-size: 13px; overflow-y: auto; }
+
+        /* مؤشرات الخطر */
+        .alert-box { background: #fef2f2; border-right: 4px solid var(--danger); padding: 15px; border-radius: 5px; margin-top: 15px; font-size: 0.95rem; }
+        .alert-box h4 { color: var(--danger); margin: 0 0 5px 0; }
+
+        /* المختبر والتقييم */
+        .lab-section { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .question { margin-bottom: 20px; }
+        .question label { font-weight: bold; color: #166534; display: block; margin-bottom: 8px; }
+        .question input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box; }
+        .btn-submit { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .feedback { margin-top: 10px; padding: 15px; border-radius: 5px; display: none; line-height: 1.6; }
+        .feedback.correct { background: #d1fae5; border: 1px solid var(--success); }
+        .feedback.wrong { background: #fee2e2; border: 1px solid var(--danger); }
+        .explanation { border-top: 1px dashed #94a3b8; margin-top: 10px; padding-top: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>التحقيقات والأدلة الرقمية</h2>
+            <p style="margin:5px 0 0; font-size:0.9rem; color:#cbd5e1;">1462</p>
+        </div>
+        
+        <ul class="sidebar-menu" style="margin-top:10px;">
+            <li><a href="index.html">🏠 الصفحة الرئيسية</a></li>
+        </ul>
+
+        <div class="nav-group">المحور الثاني: النظام والسجلات</div>
+        <ul class="sidebar-menu">
+            <li><a href="#section1" class="active">1. تحليل السلوك (Sysinternals)</a></li>
+            <li><a href="#section2">2. سجلات الأحداث (Event Viewer)</a></li>
+            <li><a href="#lab">🔬 المختبر الشامل للتقييم</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">المحور الثاني: مراقبة النظام وسجلاته</h1>
+
+        <section id="section1" class="content-card">
+            <h2>1. تحليل السلوك المتقدم (Sysinternals Suite)</h2>
+            <p>هي مجموعة أدوات متقدمة تعمل على نظام Windows تساعد في مراقبة سلوك النظام وتحليل العمليات واكتشاف البرمجيات الخبيثة. لا تخبرك هذه الأدوات مباشرة أن البرنامج خبيث، بل تساعدك على <b>تحليل السلوك</b> لاتخاذ القرار.</p>
+            <ul>
+                <li><b>Procmon:</b> تراقب العمليات وتعديلات السجل (Registry) والملفات.</li>
+                <li><b>RamMap:</b> تكشف استهلاك الذاكرة العشوائية لكل برنامج.</li>
+                <li><b>TCPView:</b> تعرض الاتصالات الشبكية الحالية والمنافذ المفتوحة لكل عملية.</li>
+                <li><b>Autoruns:</b> تكشف البرامج والخدمات التي تعمل تلقائياً عند بدء التشغيل.</li>
+            </ul>
+
+            <h3>💻 محاكي حزمة Sysinternals</h3>
+            <p>تنقل بين التبويبات بالأسفل واقرأ <b>التحليل الجنائي</b> المرافق لكل أداة لفهم سبب اشتباهنا ببرنامج <code>update.exe</code>.</p>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('procmon')">Procmon</button>
+                <button class="tab-btn" onclick="showTab('rammap')">RamMap</button>
+                <button class="tab-btn" onclick="showTab('tcpview')">TCPView</button>
+                <button class="tab-btn" onclick="showTab('autoruns')">Autoruns</button>
+            </div>
+
+            <div id="procmon" class="tab-content active">
+                <table class="sim-table">
+                    <tr><th>Time</th><th>Process Name</th><th>Operation</th><th>Path</th><th>Result</th></tr>
+                    <tr><td>10:01:22</td><td>explorer.exe</td><td>RegQueryValue</td><td>HKCU\Software\Microsoft\Windows</td><td>SUCCESS</td></tr>
+                    <tr><td>10:01:25</td><td>chrome.exe</td><td>CreateFile</td><td>C:\Users\Admin\AppData\...</td><td>SUCCESS</td></tr>
+                    <tr class="suspicious"><td>10:01:28</td><td>update.exe</td><td>WriteFile</td><td>C:\Windows\System32\sys.dll</td><td>SUCCESS</td></tr>
+                    <tr><td>10:01:30</td><td>svchost.exe</td><td>TCP Connect</td><td>192.168.1.1:53</td><td>SUCCESS</td></tr>
+                </table>
+                <div class="forensic-note">
+                    <strong>🔍 التحليل الجنائي (Procmon):</strong> لاحظ السطر المظلل بالأحمر. برنامج يسمى <code>update.exe</code> يقوم بعملية (WriteFile) وزرع ملف <code>sys.dll</code> داخل مجلد <code>System32</code> الحساس. البرامج العادية لا تضع ملفات عشوائية في هذا المجلد، وهذا أسلوب كلاسيكي للبرمجيات الخبيثة لزرع ملفاتها في النظام.
+                </div>
+            </div>
+
+            <div id="rammap" class="tab-content">
+                <table class="sim-table">
+                    <tr><th>Process Name</th><th>PID</th><th>Active (KB)</th><th>Standby (KB)</th><th>Total (KB)</th></tr>
+                    <tr><td>chrome.exe</td><td>4512</td><td>450,120</td><td>12,000</td><td>462,120</td></tr>
+                    <tr><td>explorer.exe</td><td>1204</td><td>85,200</td><td>5,000</td><td>90,200</td></tr>
+                    <tr class="suspicious"><td>update.exe</td><td>5620</td><td>2,048,500</td><td>10,000</td><td>2,058,500</td></tr>
+                    <tr><td>services.exe</td><td>880</td><td>15,400</td><td>1,200</td><td>16,600</td></tr>
+                </table>
+                <div class="forensic-note">
+                    <strong>🔍 التحليل الجنائي (RamMap):</strong> البرنامج المشبوه <code>update.exe</code> يستهلك أكثر من 2 جيجابايت (2,048,500 KB) من الذاكرة العشوائية! برامج التحديث البسيطة لا تستهلك هذا الحجم الهائل. هذا الاستهلاك قد يدل على أن البرنامج يقوم بعملية تعدين عملات رقمية (Crypto-mining) بالخفاء، أو يقوم بتجميع بيانات ضخمة من الجهاز.
+                </div>
+            </div>
+
+            <div id="tcpview" class="tab-content">
+                <table class="sim-table">
+                    <tr><th>Process Name</th><th>PID</th><th>Protocol</th><th>Local Port</th><th>Remote Address</th><th>State</th></tr>
+                    <tr><td>chrome.exe</td><td>4512</td><td>TCP</td><td>52114</td><td>142.250.185.110:443</td><td>ESTABLISHED</td></tr>
+                    <tr><td>svchost.exe</td><td>880</td><td>UDP</td><td>123</td><td>time.windows.com:123</td><td>LISTENING</td></tr>
+                    <tr class="suspicious"><td>update.exe</td><td>5620</td><td>TCP</td><td>4444</td><td>185.12.x.x:8080</td><td>ESTABLISHED</td></tr>
+                    <tr><td>System</td><td>4</td><td>TCP</td><td>445</td><td>0.0.0.0:0</td><td>LISTENING</td></tr>
+                </table>
+                <div class="forensic-note">
+                    <strong>🔍 التحليل الجنائي (TCPView):</strong> الأداة كشفت أن <code>update.exe</code> فتح اتصالاً (ESTABLISHED) عبر المنفذ <b>4444</b> مع عنوان IP خارجي مجهول (185.12.x.x). جنائياً، المنفذ 4444 هو المنفذ الافتراضي للعديد من برامج الاختراق (مثل Metasploit) لإنشاء باب خلفي (Reverse Shell) يتحكم فيه المخترق بالجهاز.
+                </div>
+            </div>
+
+            <div id="autoruns" class="tab-content">
+                <table class="sim-table">
+                    <tr><th>Entry Name</th><th>Description</th><th>Publisher</th><th>Image Path</th></tr>
+                    <tr><td>OneDrive</td><td>Microsoft OneDrive</td><td>Microsoft Corporation</td><td>C:\Users\Admin\AppData\Local\...</td></tr>
+                    <tr><td>SecurityHealth</td><td>Windows Security</td><td>Microsoft Corporation</td><td>C:\Windows\System32\SecurityHealth...</td></tr>
+                    <tr class="suspicious"><td>SystemUpdate</td><td>Auto Updater</td><td>(Verified) NONE</td><td>C:\Users\Admin\AppData\Roaming\update.exe</td></tr>
+                </table>
+                <div class="forensic-note">
+                    <strong>🔍 التحليل الجنائي (Autoruns):</strong> لضمان بقائه يعمل حتى لو تم إعادة تشغيل الجهاز، زرع البرنامج نفسه في قائمة بدء التشغيل. ما يؤكد اشتباهنا هو أن خانة <b>Publisher (الناشر)</b> فارغة (NONE)، والبرنامج يعمل من مسار (AppData/Roaming) المخفي عادة عن المستخدم العادي.
+                </div>
+            </div>
+        </section>
+
+        <section id="section2" class="content-card">
+            <h2>2. تحليل سجلات الأحداث (Event Viewer)</h2>
+            <p>يعد Event Viewer بمثابة ذاكرة النظام؛ فهو يسجل كل ما يحدث، ويقسم السجلات إلى أنواع لتسهيل مهمة المحقق:</p>
+            <ul>
+                <li><b>Security (الأمان):</b> يوثق عمليات تسجيل الدخول الناجحة والفاشلة والصلاحيات.</li>
+                <li><b>Application (التطبيقات):</b> يوثق الأخطاء والانهيارات التي تحدث للبرامج المثبتة.</li>
+                <li><b>System (النظام):</b> يوثق أحداث نواة الويندوز، تشغيل الخدمات، وتوصيل الأجهزة الطرفية (مثل USB).</li>
+            </ul>
+
+            <h3>💻 محاكي Event Viewer</h3>
+            <p>تنقل بين القوائم الجانبية (Security, Application, System) واقرأ <b>التحليل الجنائي</b> الذي سيظهر أسفل المحاكي لتعرف أهمية كل سجل.</p>
+            
+            <div class="ev-gui">
+                <div class="ev-sidebar">
+                    <div style="padding: 10px; font-weight: bold; background: #e2e8f0;">Windows Logs</div>
+                    <div class="ev-item" onclick="loadEv('Application')">📁 Application</div>
+                    <div class="ev-item active" id="sec-tab" onclick="loadEv('Security')">🔐 Security</div>
+                    <div class="ev-item" onclick="loadEv('System')">⚙️ System</div>
+                </div>
+                <div class="ev-main">
+                    <div class="ev-table-container">
+                        <table class="sim-table" style="font-size: 12px; margin-bottom: 0;">
+                            <thead><tr><th>Level</th><th>Date and Time</th><th>Event ID</th><th>Task Category</th></tr></thead>
+                            <tbody id="ev-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="ev-details" id="ev-details"><i>Select an event to view details...</i></div>
+                </div>
+            </div>
+            
+            <div id="ev-explanation" class="forensic-note" style="margin-top: 0;"></div>
+        </section>
+
+        <section id="lab" class="content-card lab-section">
+            <h2>🔬 المختبر الشامل للمحور الثاني</h2>
+            <p>بناءً على تحليلك للمحاكيات السابقة، أجب عن الأسئلة الجنائية التالية:</p>
+
+            <div class="question">
+                <label>1. في محاكي Sysinternals، من خلال أداة RamMap، ما هو اسم البرنامج المشبوه الذي يستهلك قرابة 2 جيجابايت من الذاكرة (RAM) بشكل غير مبرر؟</label>
+                <input type="text" id="q1" placeholder="اكتب اسم البرنامج مع الامتداد (مثال: file.exe)...">
+                <div id="fb1" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>2. في أداة Autoruns، وجدنا أن نفس البرنامج المشبوه يعمل تلقائياً عند بدء تشغيل الجهاز. ما هي الخانة التي تؤكد اشتباهنا به لأنه مجهول المصدر؟</label>
+                <input type="text" id="q2" placeholder="اكتب اسم الخانة بالإنجليزية (مثال: Description, Publisher)...">
+                <div id="fb2" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>3. أي أداة من حزمة Sysinternals أثبتت لنا أن هذا البرنامج المشبوه يقوم بفتح منفذ (Port 4444) ويتصل بعنوان IP خارجي؟</label>
+                <input type="text" id="q3" placeholder="اكتب اسم الأداة...">
+                <div id="fb3" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>4. بالانتقال إلى Event Viewer، ما هو رقم الحدث (Event ID) الذي يشير إلى محاولة تسجيل دخول فاشلة في سجل Security؟</label>
+                <input type="text" id="q4" placeholder="أدخل رقم الحدث...">
+                <div id="fb4" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>5. في محاكي سجل النظام (System Log)، ما هو رقم الحدث الذي يدل على أنه تم تثبيت خدمة جديدة (Service Installed) في النظام؟</label>
+                <input type="text" id="q5" placeholder="أدخل رقم الحدث...">
+                <div id="fb5" class="feedback"></div>
+            </div>
+
+            <button class="btn-submit" onclick="evaluateLab()">تحقق من إجاباتك كافة واعرض التفسير الجنائي</button>
+        </section>
+
+    </main>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. منطق محاكي Sysinternals (Tabs)
+        // ----------------------------------------------------
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // ----------------------------------------------------
+        // 2. منطق محاكي Event Viewer
+        // ----------------------------------------------------
+        const secLogs = [
+            { level: "Audit Success", time: "28/03/2026 08:30:12", id: "4624", task: "Logon", det: "An account was successfully logged on.<br>Account Name: Admin" },
+            { level: "Audit Failure", time: "28/03/2026 09:12:01", id: "4625", task: "Logon", det: "An account failed to log on.<br>Account Name: Administrator<br>Reason: Unknown user name or bad password." },
+            { level: "Audit Failure", time: "28/03/2026 09:12:03", id: "4625", task: "Logon", det: "An account failed to log on.<br>Account Name: root<br>Reason: Unknown user name or bad password." },
+            { level: "Audit Failure", time: "28/03/2026 09:12:05", id: "4625", task: "Logon", det: "An account failed to log on.<br>Account Name: Admin<br>Reason: Unknown user name or bad password." },
+            { level: "Audit Success", time: "28/03/2026 10:05:00", id: "4634", task: "Logoff", det: "An account was logged off.<br>Account Name: Admin" }
+        ];
+
+        const appLogs = [
+            { level: "Information", time: "28/03/2026 11:00:00", id: "1042", task: "MsiInstaller", det: "Ending a Windows Installer transaction: C:\\Downloads\\Software.msi." },
+            { level: "Error", time: "28/03/2026 11:45:22", id: "1000", task: "Application Error", det: "Faulting application name: WINWORD.EXE, version: 16.0.x.x<br>Faulting module name: ntdll.dll" },
+            { level: "Warning", time: "28/03/2026 12:10:05", id: "1530", task: "User Profile Service", det: "Windows detected your registry file is still in use by other applications or services." }
+        ];
+
+        const sysLogs = [
+            { level: "Information", time: "28/03/2026 13:00:10", id: "7040", task: "Service Control Manager", det: "The start type of the Background Intelligent Transfer Service service was changed from demand start to auto start." },
+            { level: "Information", time: "28/03/2026 13:15:44", id: "7045", task: "Service Control Manager", det: "A service was installed in the system.<br>Service Name: RemoteAccessBackdoor<br>Service File Name: C:\\Windows\\System32\\sys.dll" },
+            { level: "Error", time: "28/03/2026 14:02:11", id: "41", task: "Kernel-Power", det: "The system has rebooted without cleanly shutting down first. This error could be caused if the system stopped responding, crashed, or lost power unexpectedly." }
+        ];
+
+        function loadEv(logType) {
+            document.querySelectorAll('.ev-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const tbody = document.getElementById('ev-body');
+            const details = document.getElementById('ev-details');
+            const explanation = document.getElementById('ev-explanation');
+            
+            tbody.innerHTML = '';
+            details.innerHTML = '<i>Select an event to view details...</i>';
+
+            let currentLogs = [];
+            
+            if(logType === 'Security') {
+                currentLogs = secLogs;
+                explanation.innerHTML = "<strong>🔍 التحليل الجنائي (Security Log):</strong> هذا السجل هو الأهم لتتبع الاختراقات. الحدث <b>4625</b> المكرر يدل على هجوم Brute-force لمحاولة تخمين كلمة المرور. الحدث 4624 يؤكد نجاح الدخول، مما يعني أن المخترق قد يكون نجح أخيراً أو أن المستخدم الشرعي عاد للدخول.";
+            } else if (logType === 'Application') {
+                currentLogs = appLogs;
+                explanation.innerHTML = "<strong>🔍 التحليل الجنائي (Application Log):</strong> يستفيد المحقق من هذا السجل لمعرفة البرامج التي كان يستخدمها المشتبه به. مثلاً، الحدث <b>1000</b> (Application Error) يثبت أن برنامج Word كان يعمل وانهار في وقت محدد. كما يوثق عمليات تثبيت البرامج (الحدث 1042).";
+            } else if (logType === 'System') {
+                currentLogs = sysLogs;
+                explanation.innerHTML = "<strong>🔍 التحليل الجنائي (System Log):</strong> يسجل أحداث نظام التشغيل العميقة. انتبه للحدث <b>7045</b> (Service Installed)، فالمخترقون غالباً ما يثبتون خدمات خفية (Services) لضمان بقاء برمجياتهم الخبيثة تعمل في الخلفية. كما أن الحدث 41 (Kernel-Power) يدل على انقطاع طاقة أو إعادة تشغيل قسرية للجهاز.";
+            }
+
+            currentLogs.forEach(log => {
+                let tr = document.createElement('tr');
+                tr.style.cursor = 'pointer';
+                if(log.level === 'Error' || log.level === 'Audit Failure') tr.style.color = '#991b1b';
+                
+                tr.onclick = function() {
+                    document.querySelectorAll('#ev-body tr').forEach(row => row.style.backgroundColor = '');
+                    this.style.backgroundColor = '#e2e8f0';
+                    details.innerHTML = `<b>Event ID: ${log.id} - ${log.task}</b><br><br>${log.det}`;
+                };
+                tr.innerHTML = `<td>${log.level}</td><td>${log.time}</td><td><b>${log.id}</b></td><td>${log.task}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        window.onload = () => {
+            document.getElementById('sec-tab').click();
+        };
+
+        // ----------------------------------------------------
+        // 3. تقييم المختبر الشامل والتفسير الجنائي
+        // ----------------------------------------------------
+        function evaluateLab() {
+            const q1 = document.getElementById('q1').value.trim().toLowerCase();
+            const q2 = document.getElementById('q2').value.trim().toLowerCase();
+            const q3 = document.getElementById('q3').value.trim().toLowerCase();
+            const q4 = document.getElementById('q4').value.trim();
+            const q5 = document.getElementById('q5').value.trim();
+            
+            // سؤال 1
+            const fb1 = document.getElementById('fb1');
+            fb1.style.display = 'block';
+            if(q1 === 'update.exe') {
+                fb1.className = 'feedback correct';
+                fb1.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> يظهر المحاكي أن <code>update.exe</code> يستهلك أكثر من 2,048,500 KB، وهو سلوك غير طبيعي (مؤشر خطر) لبرنامج يدعي أنه مجرد محدث نظام.</div>`;
+            } else {
+                fb1.className = 'feedback wrong';
+                fb1.innerHTML = `❌ <b>خاطئ. الإجابة هي: update.exe</b><div class="explanation"><b>التفسير:</b> بالانتقال لتبويب RamMap، ستجد برنامج <code>update.exe</code> مظللاً باللون الأحمر لاستهلاكه الضخم للذاكرة.</div>`;
+            }
+
+            // سؤال 2
+            const fb2 = document.getElementById('fb2');
+            fb2.style.display = 'block';
+            if(q2 === 'publisher') {
+                fb2.className = 'feedback correct';
+                fb2.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> خانة <b>Publisher</b> (الناشر) فارغة أو غير معروفة (NONE). البرمجيات الضارة غالباً ما تفتقر إلى توقيع رقمي موثوق وتضيف نفسها إلى Autoruns.</div>`;
+            } else {
+                fb2.className = 'feedback wrong';
+                fb2.innerHTML = `❌ <b>خاطئ. الإجابة هي: Publisher</b><div class="explanation"><b>التفسير:</b> في تبويب Autoruns، غياب اسم "الناشر" أو الشركة المبرمجة هو مؤشر قوي على أن الملف مشبوه.</div>`;
+            }
+
+            // سؤال 3
+            const fb3 = document.getElementById('fb3');
+            fb3.style.display = 'block';
+            if(q3 === 'tcpview') {
+                fb3.className = 'feedback correct';
+                fb3.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> أداة <b>TCPView</b> هي المسؤولة عن كشف الاتصالات الشبكية الحالية وعناوين الـ IP المرتبطة بكل عملية.</div>`;
+            } else {
+                fb3.className = 'feedback wrong';
+                fb3.innerHTML = `❌ <b>خاطئ. الإجابة هي: TCPView</b><div class="explanation"><b>التفسير:</b> الأداة التي تعرض المنافذ (Ports) وعناوين الـ IP المتصلة حالياً هي TCPView.</div>`;
+            }
+
+            // سؤال 4
+            const fb4 = document.getElementById('fb4');
+            fb4.style.display = 'block';
+            if(q4 === '4625') {
+                fb4.className = 'feedback correct';
+                fb4.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> الحدث رقم <b>4625</b> هو المؤشر الرسمي لمحاولات الدخول الفاشلة في سجلات أمان الويندوز.</div>`;
+            } else {
+                fb4.className = 'feedback wrong';
+                fb4.innerHTML = `❌ <b>خاطئ. الإجابة هي: 4625</b><div class="explanation"><b>التفسير:</b> الحدث 4624 هو لدخول ناجح، بينما الحدث 4625 هو لمحاولة دخول فاشلة.</div>`;
+            }
+
+            // سؤال 5
+            const fb5 = document.getElementById('fb5');
+            fb5.style.display = 'block';
+            if(q5 === '7045') {
+                fb5.className = 'feedback correct';
+                fb5.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> في سجل System، الحدث <b>7045</b> يعني (A service was installed). مراقبة هذا الحدث مهمة جداً لاكتشاف البرامج الخبيثة التي تزرع نفسها كخدمة مخفية في النظام.</div>`;
+            } else {
+                fb5.className = 'feedback wrong';
+                fb5.innerHTML = `❌ <b>خاطئ. الإجابة هي: 7045</b><div class="explanation"><b>التفسير:</b> إذا فتحت محاكي سجل System، ستجد أن الحدث 7045 يوثق عملية تثبيت خدمة جديدة (Service Installed).</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

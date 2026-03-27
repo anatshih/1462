@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحور الأول: الشبكات - التحقيقات والأدلة الرقمية</title>
+    <style>
+        /* إعدادات عامة */
+        :root {
+            --primary-bg: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --accent-color: #2563eb;
+            --text-main: #334155;
+            --text-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+            --terminal-bg: #0f172a;
+            --terminal-text: #22c55e;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-main); }
+        
+        /* القائمة الجانبية */
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 2px solid var(--accent-color); background-color: #0f172a; }
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+        .nav-group { padding: 15px 20px 5px; font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li a { display: block; padding: 12px 20px; color: var(--text-light); text-decoration: none; border-right: 4px solid transparent; }
+        .sidebar-menu li a:hover { background-color: var(--sidebar-hover); }
+        .sidebar-menu li a.active { background-color: var(--sidebar-hover); border-right-color: var(--accent-color); font-weight: bold; }
+
+        /* المحتوى الرئيسي */
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; scroll-behavior: smooth; }
+        .page-title { color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        .content-card { background-color: var(--card-bg); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .content-card h2 { color: var(--accent-color); margin-top: 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; }
+        .content-card h3 { color: #475569; font-size: 1.1rem; }
+        
+        /* المحاكيات (الطرفيات) */
+        .terminal { background-color: var(--terminal-bg); color: var(--terminal-text); font-family: 'Courier New', monospace; padding: 15px; border-radius: 6px; height: 250px; overflow-y: auto; direction: ltr; text-align: left; margin-top: 15px; }
+        .terminal-input-area { display: flex; margin-top: 10px; }
+        .terminal-prompt { margin-right: 10px; color: #3b82f6; font-weight: bold; }
+        .terminal-input { background: transparent; border: none; color: var(--terminal-text); font-family: 'Courier New', monospace; font-size: 15px; width: 80%; outline: none; }
+        
+        /* محاكي Wireshark */
+        .wireshark-gui { border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; margin-top: 15px; direction: ltr; }
+        .ws-toolbar { background: #f1f5f9; padding: 10px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #cbd5e1; }
+        .ws-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .ws-btn.stop { background: var(--danger); display: none; }
+        .ws-filter { flex-grow: 1; display: flex; align-items: center; background: white; padding: 2px 5px; border: 1px solid #94a3b8; border-radius: 3px; }
+        .ws-filter input { border: none; outline: none; width: 100%; padding: 5px; }
+        .ws-table-container { height: 200px; overflow-y: auto; background: white; border-bottom: 1px solid #cbd5e1; }
+        .ws-table { width: 100%; border-collapse: collapse; font-family: 'Courier New', monospace; font-size: 12px; }
+        .ws-table th { background: #e2e8f0; padding: 5px; text-align: left; position: sticky; top: 0; }
+        .ws-table td { border: 1px solid #f1f5f9; padding: 4px; cursor: pointer; }
+        .ws-table tr:hover td { background: #3b82f6; color: white; }
+        .ws-details { height: 100px; background: #f8fafc; padding: 10px; font-family: 'Courier New', monospace; font-size: 12px; overflow-y: auto; }
+        
+        .proto-tcp { background-color: #e4ffc7; }
+        .proto-http { background-color: #eaf1da; }
+        .proto-dns { background-color: #ccffff; }
+
+        /* مؤشرات الخطر */
+        .alert-box { background: #fef2f2; border-right: 4px solid var(--danger); padding: 15px; border-radius: 5px; margin-top: 15px; font-size: 0.95rem; }
+        .alert-box h4 { color: var(--danger); margin: 0 0 5px 0; }
+
+        /* المختبر والتقييم */
+        .lab-section { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .question { margin-bottom: 20px; }
+        .question label { font-weight: bold; color: #166534; display: block; margin-bottom: 8px; }
+        .question input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box; }
+        .btn-submit { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .feedback { margin-top: 10px; padding: 15px; border-radius: 5px; display: none; line-height: 1.6; }
+        .feedback.correct { background: #d1fae5; border: 1px solid var(--success); }
+        .feedback.wrong { background: #fee2e2; border: 1px solid var(--danger); }
+        .explanation { border-top: 1px dashed #94a3b8; margin-top: 10px; padding-top: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>التحقيقات والأدلة الرقمية</h2>
+            <p style="margin:5px 0 0; font-size:0.9rem; color:#cbd5e1;">1462</p>
+        </div>
+        
+        <ul class="sidebar-menu" style="margin-top:10px;">
+            <li><a href="index.html">🏠 الصفحة الرئيسية</a></li>
+        </ul>
+
+        <div class="nav-group">المحور الأول: الشبكات</div>
+        <ul class="sidebar-menu">
+            <li><a href="#section1" class="active">1. أدوات الشبكة (CMD/Linux)</a></li>
+            <li><a href="#section2">2. تحليل حزم الشبكة (Wireshark)</a></li>
+            <li><a href="#section3">3. فحص المنافذ والثغرات (Nmap)</a></li>
+            <li><a href="#lab">🔬 المختبر الشامل للتقييم</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">المحور الأول: تحليل الشبكات والاتصالات</h1>
+
+        <section id="section1" class="content-card">
+            <h2>1. أدوات معلومات الشبكة الأساسية</h2>
+            <p>تعتبر هذه الأدوات الخطوة الأولى للمحقق الرقمي لفهم بيئة الاتصال. فمن خلالها نتعرف على عنوان الجهاز، ونختبر جودة الاتصال، ونتتبع المسار الذي تسلكه البيانات.</p>
+            <ul>
+                <li><b>ipconfig / ifconfig:</b> لمعرفة إعدادات الشبكة وعنوان الجهاز في أنظمة الويندوز واللينكس.</li>
+                <li><b>ping:</b> لاختبار الاتصال بجهاز آخر والتأكد من استجابته للوصول.</li>
+                <li><b>tracert:</b> لتتبع مسار البيانات ومعرفة الروترات (القفزات) التي تمر بها حتى تصل لوجهتها.</li>
+            </ul>
+
+            <h3>💻 محاكي موجه الأوامر (يدعم Windows و Linux)</h3>
+            <p>جرب كتابة الأوامر التالية في الشاشة أدناه واضغط Enter:<br>
+            <code>ipconfig</code> | <code>ifconfig</code> | <code>ping 8.8.8.8</code> | <code>tracert google.com</code></p>
+            
+            <div class="terminal" id="term-cmd" onclick="document.getElementById('input-cmd').focus()">
+                <div id="out-cmd">Network Forensics Terminal Emulator v1.0<br>Ready for commands...<br><br></div>
+                <div class="terminal-input-area">
+                    <span class="terminal-prompt">user@forensics:~$</span>
+                    <input type="text" id="input-cmd" class="terminal-input" autocomplete="off" onkeypress="handleCmd(event)">
+                </div>
+            </div>
+        </section>
+
+        <section id="section2" class="content-card">
+            <h2>2. التقاط وتحليل البيانات (Wireshark)</h2>
+            <p>كثير من الأدلة الرقمية لا تكون داخل الجهاز فقط بل تمر عبر الشبكة. يتيح برنامج Wireshark التقاط الحزم المارة عبر الشبكة وتحليلها بشكل تفصيلي لمعرفة البروتوكولات المستخدمة واكتشاف الاتصالات المشبوهة.</p>
+            
+            <div class="alert-box">
+                <h4>⚠️ مؤشرات الخطر الجنائية</h4>
+                يجب على المحقق الانتباه دائماً إلى: الاتصالات مع عناوين IP خارجية غير معروفة، وحركة البيانات الضخمة بدون مبرر، واستخدام بروتوكولات غير مشفرة لنقل بيانات حساسة.
+            </div>
+
+            <h3>💻 محاكي واجهة Wireshark</h3>
+            <p>اضغط <b>Start Capture</b> لالتقاط البيانات. جرب كتابة <code>dns</code> أو <code>http</code> في الفلتر، واضغط على أي حزمة في الجدول لعرض تفاصيلها بالأسفل.</p>
+            <div class="wireshark-gui">
+                <div class="ws-toolbar">
+                    <button class="ws-btn" id="ws-start" onclick="startWs()">▶ Start Capture</button>
+                    <button class="ws-btn stop" id="ws-stop" onclick="stopWs()">⏹ Stop</button>
+                    <div class="ws-filter">
+                        <span style="color:#64748b; font-weight:bold; margin-right:5px;">Filter:</span>
+                        <input type="text" id="ws-filter-input" placeholder="e.g., http, dns, tcp" onkeyup="renderWs()">
+                    </div>
+                </div>
+                <div class="ws-table-container">
+                    <table class="ws-table">
+                        <thead><tr><th width="5%">No.</th><th width="15%">Time</th><th width="20%">Source</th><th width="20%">Destination</th><th width="10%">Proto</th><th>Info</th></tr></thead>
+                        <tbody id="ws-body"></tbody>
+                    </table>
+                </div>
+                <div class="ws-details" id="ws-details"><i>Select a packet to view details...</i></div>
+            </div>
+        </section>
+
+        <section id="section3" class="content-card">
+            <h2>3. فحص المنافذ واكتشاف الخدمات (Nmap)</h2>
+            <p>أداة Nmap هي أداة لتحليل حزم البيانات وتستخدم لمعرفة المنافذ المفتوحة في النظام والثغرات التي يمكن الدخول من خلالها. كل منفذ مفتوح يمثل خدمة تعمل (مثل منفذ 80 لخدمة HTTP)، مما يساعد المحقق في تكوين تصور أولي عن البيئة المستهدفة.</p>
+
+            <h3>💻 محاكي Nmap (Terminal)</h3>
+            <p>جرب الأوامر التالية:<br>
+            <code>nmap 192.168.1.5</code> (لفحص المنافذ المفتوحة لجهاز محدد) <br>
+            <code>nmap -sn 192.168.1.0/24</code> (لاكتشاف الأجهزة المتصلة بالشبكة بالكامل)</p>
+            
+            <div class="terminal" id="term-nmap" onclick="document.getElementById('input-nmap').focus()">
+                <div id="out-nmap">Kali GNU/Linux Rolling<br><br></div>
+                <div class="terminal-input-area">
+                    <span class="terminal-prompt" style="color:#ef4444;">root@kali:~#</span>
+                    <input type="text" id="input-nmap" class="terminal-input" autocomplete="off" onkeypress="handleNmap(event)">
+                </div>
+            </div>
+        </section>
+
+        <section id="lab" class="content-card lab-section">
+            <h2>🔬 المختبر الشامل للمحور الأول</h2>
+            <p>أجب عن الأسئلة التالية لاختبار فهمك الجنائي لكافة الأدوات المشروحة في هذا المحور:</p>
+
+            <div class="question">
+                <label>1. ما هي الأداة المرتبطة بأنظمة (Linux) مثل Kali Linux وتؤدي وظيفة عرض معلومات إعدادات واجهات الشبكة؟</label>
+                <input type="text" id="q1" placeholder="اكتب اسم الأداة...">
+                <div id="fb1" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>2. عندما تريد اختبار ما إذا كان هناك اتصال بين جهازك وجهة أخرى على الشبكة وقياس الاستجابة، ما الأداة التي تستخدمها؟</label>
+                <input type="text" id="q2" placeholder="اكتب اسم الأداة...">
+                <div id="fb2" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>3. أي أداة ستستخدمها لمعرفة المسار (Hops) الذي تسلكه الحزمة حتى تصل إلى وجهتها النهائية للمساعدة في تحديد مكان الانقطاع؟</label>
+                <input type="text" id="q3" placeholder="اكتب اسم الأداة...">
+                <div id="fb3" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>4. في محاكي Wireshark أعلاه، بعد بدء الالتقاط واستخدام فلتر (dns)، كم عدد الطلبات (Queries/Responses) التي ظهرت؟</label>
+                <input type="text" id="q4" placeholder="أدخل العدد رقماً...">
+                <div id="fb4" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>5. في أداة Nmap، ما هي الكلمة الإنجليزية التي تظهر في عمود (STATE) لتدل على أن المنفذ يقبل الاتصالات ويوجد خدمة تعمل عليه؟</label>
+                <input type="text" id="q5" placeholder="أدخل حالة المنفذ...">
+                <div id="fb5" class="feedback"></div>
+            </div>
+
+            <button class="btn-submit" onclick="evaluateLab()">تحقق من إجاباتك كافة واعرض التفسير الجنائي</button>
+        </section>
+
+    </main>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. منطق محاكي CMD الشامل (ipconfig, ifconfig, ping, tracert)
+        // ----------------------------------------------------
+        function handleCmd(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('input-cmd');
+                let cmd = input.value.trim().toLowerCase();
+                const output = document.getElementById('out-cmd');
+                
+                output.innerHTML += `user@forensics:~$ ${cmd}<br>`;
+                
+                if (cmd === 'ipconfig') {
+                    output.innerHTML += `
+Windows IP Configuration<br><br>
+Ethernet adapter Local Area Connection:<br>
+   Connection-specific DNS Suffix  . :<br>
+   IPv4 Address. . . . . . . . . . . : 192.168.1.15<br>
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0<br>
+   Default Gateway . . . . . . . . . : 192.168.1.1<br><br>`;
+                } else if (cmd === 'ifconfig') {
+                    output.innerHTML += `
+eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500<br>
+        inet 192.168.1.15  netmask 255.255.255.0  broadcast 192.168.1.255<br>
+        inet6 fe80::a00:27ff:fe4e:66a1  prefixlen 64  scopeid 0x20&lt;link&gt;<br>
+        ether 08:00:27:4e:66:a1  txqueuelen 1000  (Ethernet)<br>
+        RX packets 1245  bytes 845621 (825.8 KiB)<br>
+        TX packets 845  bytes 125482 (122.5 KiB)<br><br>
+lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536<br>
+        inet 127.0.0.1  netmask 255.0.0.0<br><br>`;
+                } else if (cmd.startsWith('ping ')) {
+                    let target = cmd.split(' ')[1];
+                    output.innerHTML += `
+PING ${target} (8.8.8.8) 56(84) bytes of data.<br>
+64 bytes from ${target}: icmp_seq=1 ttl=117 time=14.2 ms<br>
+64 bytes from ${target}: icmp_seq=2 ttl=117 time=15.1 ms<br>
+64 bytes from ${target}: icmp_seq=3 ttl=117 time=13.8 ms<br>
+--- ${target} ping statistics ---<br>
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms<br><br>`;
+                } else if (cmd.startsWith('tracert ') || cmd.startsWith('traceroute ')) {
+                    let target = cmd.split(' ')[1] || "google.com";
+                    output.innerHTML += `
+traceroute to ${target} (142.250.185.110), 30 hops max, 60 byte packets<br>
+ 1  192.168.1.1 (192.168.1.1)  1.123 ms  1.056 ms  1.201 ms<br>
+ 2  10.0.0.1 (10.0.0.1)  10.231 ms  12.451 ms  9.888 ms<br>
+ 3  142.250.185.110 (142.250.185.110)  15.120 ms  14.501 ms  15.002 ms<br>
+Trace complete.<br><br>`;
+                } else if (cmd === 'clear' || cmd === 'cls') {
+                    output.innerHTML = '';
+                } else if (cmd !== '') {
+                    output.innerHTML += `bash: ${cmd}: command not found<br><br>`;
+                }
+                input.value = '';
+                const term = document.getElementById('term-cmd');
+                term.scrollTop = term.scrollHeight;
+            }
+        }
+
+        // ----------------------------------------------------
+        // 2. منطق محاكي Wireshark
+        // ----------------------------------------------------
+        const wsData = [
+            { no: 1, time: "0.000", src: "192.168.1.15", dst: "8.8.8.8", proto: "DNS", info: "Standard query A www.google.com", class: "proto-dns", det: "Domain Name System (query)" },
+            { no: 2, time: "0.015", src: "8.8.8.8", dst: "192.168.1.15", proto: "DNS", info: "Standard query response A 142.250.185.110", class: "proto-dns", det: "Domain Name System (response)" },
+            { no: 3, time: "0.021", src: "192.168.1.15", dst: "142.250.185.110", proto: "TCP", info: "54321 > 80 [SYN]", class: "proto-tcp", det: "Transmission Control Protocol, Src Port: 54321, Dst Port: 80" },
+            { no: 4, time: "0.051", src: "192.168.1.15", dst: "142.250.185.110", proto: "HTTP", info: "GET / HTTP/1.1", class: "proto-http", det: "Hypertext Transfer Protocol<br>GET / HTTP/1.1\\r\\nHost: www.google.com" },
+            { no: 5, time: "0.150", src: "192.168.1.15", dst: "1.1.1.1", proto: "DNS", info: "Standard query A malware-server.com", class: "proto-dns", det: "Domain Name System (query)<br>Suspicious domain requested." }
+        ];
+        let wsInterval, wsIndex = 0, wsCaptured = [];
+
+        function startWs() {
+            document.getElementById('ws-start').style.display = 'none';
+            document.getElementById('ws-stop').style.display = 'block';
+            wsCaptured = []; wsIndex = 0;
+            document.getElementById('ws-body').innerHTML = '';
+            
+            wsInterval = setInterval(() => {
+                if(wsIndex < wsData.length) {
+                    wsCaptured.push(wsData[wsIndex]);
+                    renderWs();
+                    wsIndex++;
+                } else { stopWs(); }
+            }, 800);
+        }
+
+        function stopWs() {
+            clearInterval(wsInterval);
+            document.getElementById('ws-start').style.display = 'block';
+            document.getElementById('ws-stop').style.display = 'none';
+        }
+
+        function renderWs() {
+            const filter = document.getElementById('ws-filter-input').value.toLowerCase();
+            const tbody = document.getElementById('ws-body');
+            tbody.innerHTML = '';
+            
+            wsCaptured.forEach(p => {
+                if(p.proto.toLowerCase().includes(filter) || filter === "") {
+                    let tr = document.createElement('tr');
+                    tr.className = p.class;
+                    tr.onclick = () => document.getElementById('ws-details').innerHTML = `<b>Frame ${p.no}:</b> ${p.info}<br><hr>${p.det}`;
+                    tr.innerHTML = `<td>${p.no}</td><td>${p.time}</td><td>${p.src}</td><td>${p.dst}</td><td>${p.proto}</td><td>${p.info}</td>`;
+                    tbody.appendChild(tr);
+                }
+            });
+            const container = document.querySelector('.ws-table-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ----------------------------------------------------
+        // 3. منطق محاكي Nmap
+        // ----------------------------------------------------
+        function handleNmap(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('input-nmap');
+                const cmd = input.value.trim().toLowerCase();
+                const output = document.getElementById('out-nmap');
+                
+                output.innerHTML += `root@kali:~# ${cmd}<br>`;
+                
+                if (cmd === 'nmap 192.168.1.5') {
+                    output.innerHTML += `
+Starting Nmap 7.92<br>
+Nmap scan report for 192.168.1.5<br>
+PORT     STATE  SERVICE<br>
+22/tcp   open   ssh<br>
+80/tcp   open   http<br>
+443/tcp  open   https<br>
+Nmap done: 1 IP address scanned.<br><br>`;
+                } else if (cmd === 'nmap -sn 192.168.1.0/24') {
+                    output.innerHTML += `
+Starting Nmap 7.92<br>
+Nmap scan report for 192.168.1.1<br>
+Host is up (0.0020s latency).<br>
+Nmap scan report for 192.168.1.5<br>
+Host is up.<br>
+Nmap scan report for 192.168.1.15<br>
+Host is up.<br>
+Nmap done: 256 IP addresses (3 hosts up) scanned.<br><br>`;
+                } else if (cmd === 'clear' || cmd === 'cls') {
+                    output.innerHTML = '';
+                } else if (cmd !== '') {
+                    output.innerHTML += `bash: ${cmd}: command not found<br><br>`;
+                }
+                input.value = '';
+                const term = document.getElementById('term-nmap');
+                term.scrollTop = term.scrollHeight;
+            }
+        }
+
+        // ----------------------------------------------------
+        // 4. تقييم المختبر الشامل والتفسير الجنائي
+        // ----------------------------------------------------
+        function evaluateLab() {
+            const q1 = document.getElementById('q1').value.trim().toLowerCase();
+            const q2 = document.getElementById('q2').value.trim().toLowerCase();
+            const q3 = document.getElementById('q3').value.trim().toLowerCase();
+            const q4 = document.getElementById('q4').value.trim();
+            const q5 = document.getElementById('q5').value.trim().toLowerCase();
+            
+            // سؤال 1 (ifconfig)
+            const fb1 = document.getElementById('fb1');
+            fb1.style.display = 'block';
+            if(q1 === 'ifconfig') {
+                fb1.className = 'feedback correct';
+                fb1.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> أداة ifconfig مرتبطة بأنظمة لينكس (مثل بيئة Kali المستخدمة في التحقيقات) وتستخدم لمعرفة عنوان الـ IP واسم بطاقة الشبكة وحالتها. بينما ipconfig تستخدم في الويندوز.</div>`;
+            } else {
+                fb1.className = 'feedback wrong';
+                fb1.innerHTML = `❌ <b>خاطئ. الإجابة هي: ifconfig</b><div class="explanation"><b>التفسير:</b> الأداة المخصصة لأنظمة Linux لاستعراض إعدادات الشبكة هي ifconfig.</div>`;
+            }
+
+            // سؤال 2 (ping)
+            const fb2 = document.getElementById('fb2');
+            fb2.style.display = 'block';
+            if(q2 === 'ping') {
+                fb2.className = 'feedback correct';
+                fb2.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> الأداة ping هي الأداة المعتمدة لإرسال حزم اختبار لعنوان معين وقياس الاستجابة للتأكد من قابلية الوصول للجهاز الآخر.</div>`;
+            } else {
+                fb2.className = 'feedback wrong';
+                fb2.innerHTML = `❌ <b>خاطئ. الإجابة هي: ping</b><div class="explanation"><b>التفسير:</b> لاختبار الاتصال وقياس زمن الاستجابة، نستخدم أداة ping.</div>`;
+            }
+
+            // سؤال 3 (tracert)
+            const fb3 = document.getElementById('fb3');
+            fb3.style.display = 'block';
+            if(q3 === 'tracert' || q3 === 'traceroute') {
+                fb3.className = 'feedback correct';
+                fb3.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> أداة tracert تظهر المحطات (القفزات/Hops) التي تمر بها البيانات. جنائياً، هذا مهم لتتبع خط سير الاتصال وتحديد نقطة توقف الاتصال أو اعتراضه.</div>`;
+            } else {
+                fb3.className = 'feedback wrong';
+                fb3.innerHTML = `❌ <b>خاطئ. الإجابة هي: tracert</b><div class="explanation"><b>التفسير:</b> الأداة التي تعرض "المسار" والمحطات هي tracert، بينما ping يكتفي باختبار وجود الاتصال من عدمه.</div>`;
+            }
+
+            // سؤال 4 (Wireshark)
+            const fb4 = document.getElementById('fb4');
+            fb4.style.display = 'block';
+            if(q4 === '3' || q4 === "٣") {
+                fb4.className = 'feedback correct';
+                fb4.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> بالنظر للمحاكي واستخدام الفلتر، ستجد 3 حزم DNS. التتبع الجنائي لهذه الحزم قادنا لاكتشاف طلب DNS مشبوه باتجاه (malware-server.com).</div>`;
+            } else {
+                fb4.className = 'feedback wrong';
+                fb4.innerHTML = `❌ <b>خاطئ. الإجابة هي: 3</b><div class="explanation"><b>التفسير:</b> إذا شغلت المحاكي وطبقت فلتر dns، ستجد 3 حزم باللون الأزرق الفاتح تمثل طلبات واستجابات نظام أسماء النطاقات.</div>`;
+            }
+
+            // سؤال 5 (Nmap)
+            const fb5 = document.getElementById('fb5');
+            fb5.style.display = 'block';
+            if(q5 === 'open') {
+                fb5.className = 'feedback correct';
+                fb5.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> الحالة open تعني أن المنفذ مفتوح وتوجد خدمة تستقبل الاتصالات. في التحقيق الرقمي، المنافذ المفتوحة غير المعتادة قد تعني وجود باب خلفي (Backdoor).</div>`;
+            } else {
+                fb5.className = 'feedback wrong';
+                fb5.innerHTML = `❌ <b>خاطئ. الإجابة هي: open</b><div class="explanation"><b>التفسير:</b> حالة open تعني منفذ مفتوح، بينما closed تعني مغلق.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

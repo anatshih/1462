@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحور الثالث: الأدلة والاسترجاع - التحقيقات والأدلة الرقمية</title>
+    <style>
+        /* إعدادات عامة مطابقة للمنصة */
+        :root {
+            --primary-bg: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --accent-color: #2563eb;
+            --text-main: #334155;
+            --text-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info-bg: #eff6ff;
+            --info-border: #3b82f6;
+            --tool-header: #e2e8f0;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-main); }
+        
+        /* القائمة الجانبية */
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 2px solid var(--accent-color); background-color: #0f172a; }
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+        .nav-group { padding: 15px 20px 5px; font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li a { display: block; padding: 12px 20px; color: var(--text-light); text-decoration: none; border-right: 4px solid transparent; }
+        .sidebar-menu li a:hover { background-color: var(--sidebar-hover); }
+        .sidebar-menu li a.active { background-color: var(--sidebar-hover); border-right-color: var(--accent-color); font-weight: bold; }
+
+        /* المحتوى الرئيسي */
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; scroll-behavior: smooth; }
+        .page-title { color: #0f172a; border-bottom: 3px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 30px; }
+        
+        .content-card { background-color: var(--card-bg); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .content-card h2 { color: var(--accent-color); margin-top: 0; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; }
+        .content-card h3 { color: #475569; font-size: 1.1rem; }
+
+        /* صندوق الشرح الجنائي */
+        .forensic-note { background: var(--info-bg); border-right: 4px solid var(--info-border); padding: 12px; font-family: 'Segoe UI', sans-serif; font-size: 14px; direction: rtl; color: #1e3a8a; border-radius: 4px; margin-top: 15px; line-height: 1.6;}
+        .forensic-note strong { color: #1d4ed8; }
+        .forensic-note.dynamic { background: #fffbeb; border-color: #f59e0b; color: #92400e; }
+        .forensic-note.dynamic strong { color: #b45309; }
+
+        /* مؤشرات الخطر */
+        .alert-box { background: #fef2f2; border-right: 4px solid var(--danger); padding: 15px; border-radius: 5px; margin-bottom: 15px; font-size: 0.95rem; }
+        .alert-box h4 { color: var(--danger); margin: 0 0 5px 0; }
+
+        /* أزرار المحاكيات */
+        .sim-btn { background: var(--accent-color); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 5px; transition: 0.2s; }
+        .sim-btn:hover { background: #1d4ed8; }
+
+        /* محاكي Disk Digger */
+        .dd-gui { border: 1px solid #cbd5e1; border-radius: 5px; background: white; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        .dd-header { background: #f1f5f9; padding: 10px; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; }
+        .dd-main { display: flex; height: 200px; }
+        .dd-drives { width: 30%; border-right: 1px solid #cbd5e1; padding: 10px; background: #f8fafc; }
+        .dd-files { width: 70%; padding: 10px; overflow-y: auto; }
+        .drive-item { padding: 8px; border: 1px solid #e2e8f0; margin-bottom: 5px; cursor: pointer; background: white; border-radius: 3px; }
+        .drive-item:hover, .drive-item.active { background: #e0f2fe; border-color: #bae6fd; }
+        table.file-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; direction: ltr; }
+        table.file-table th { border-bottom: 2px solid #cbd5e1; padding: 5px; background: #f8fafc;}
+        table.file-table td { border-bottom: 1px solid #f1f5f9; padding: 5px; cursor: pointer;}
+        table.file-table tr:hover td { background: #e2e8f0; }
+        .status-deleted { color: var(--danger); font-weight: bold; }
+        .status-good { color: var(--success); }
+
+        /* محاكي FTK Imager */
+        .ftk-gui { border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; overflow: hidden; padding: 20px; text-align: center; height: 220px; position: relative; }
+        .ftk-step { display: none; }
+        .ftk-step.active { display: block; }
+        .progress-bar { width: 80%; height: 20px; background: #e2e8f0; border-radius: 10px; margin: 20px auto; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: var(--success); transition: width 0.5s; }
+        .hash-box { background: #1e293b; color: #22c55e; padding: 10px; font-family: monospace; border-radius: 4px; margin-top: 15px; direction: ltr; text-align: left; }
+
+        /* محاكي Encase */
+        .encase-gui { border: 1px solid #cbd5e1; border-radius: 5px; background: white; overflow: hidden; display: flex; height: 320px; direction: ltr; }
+        .encase-tree { width: 25%; background: #f1f5f9; border-right: 1px solid #cbd5e1; padding: 10px; overflow-y: auto; font-size: 13px; }
+        .encase-main { width: 75%; display: flex; flex-direction: column; }
+        .encase-toolbar { background: #e2e8f0; padding: 8px; border-bottom: 1px solid #cbd5e1; display: flex; gap: 10px; }
+        .encase-content { flex: 1; padding: 10px; overflow-y: auto; }
+        .tree-node { cursor: pointer; padding: 4px; margin-left: 10px; border-radius: 3px;}
+        .tree-node:hover, .tree-node.active { background: #bae6fd; font-weight: bold; }
+        .hex-viewer { font-family: 'Courier New', monospace; font-size: 12px; background: #f8fafc; padding: 10px; height: 100px; overflow-y: auto; border-top: 1px solid #cbd5e1; }
+
+        /* المختبر والتقييم */
+        .lab-section { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .question { margin-bottom: 20px; }
+        .question label { font-weight: bold; color: #166534; display: block; margin-bottom: 8px; }
+        .question input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box; }
+        .btn-submit { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .feedback { margin-top: 10px; padding: 15px; border-radius: 5px; display: none; line-height: 1.6; }
+        .feedback.correct { background: #d1fae5; border: 1px solid var(--success); }
+        .feedback.wrong { background: #fee2e2; border: 1px solid var(--danger); }
+        .explanation { border-top: 1px dashed #94a3b8; margin-top: 10px; padding-top: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>التحقيقات والأدلة الرقمية</h2>
+            <p style="margin:5px 0 0; font-size:0.9rem; color:#cbd5e1;">1462</p>
+        </div>
+        
+        <ul class="sidebar-menu" style="margin-top:10px;">
+            <li><a href="index.html">🏠 الصفحة الرئيسية</a></li>
+        </ul>
+
+        <div class="nav-group">المحور الثالث: الأدلة الرقمية</div>
+        <ul class="sidebar-menu">
+            <li><a href="#section1" class="active">1. استعادة الملفات (Disk Digger)</a></li>
+            <li><a href="#section2">2. التصوير الجنائي (FTK Imager)</a></li>
+            <li><a href="#section3">3. إدارة القضايا (Encase)</a></li>
+            <li><a href="#lab">🔬 المختبر الشامل للتقييم</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">المحور الثالث: التعامل مع الأدلة الرقمية</h1>
+
+        <section id="section1" class="content-card">
+            <h2>1. استعادة الملفات المحذوفة (Disk Digger)</h2>
+            <p>كثيراً ما يقوم المشتبه به بحذف الملفات لإخفاء الأدلة. أدوات الاسترجاع تبحث في القطاعات الحرة من القرص (Free Space) عن بقايا الملفات لإنقاذها.</p>
+            <ul>
+                <li><b>Basic Scan (الفحص السريع):</b> يبحث عن الملفات المحذوفة حديثاً عبر سجلات النظام (MFT).</li>
+                <li><b>Deep Scan (الفحص العميق):</b> يبحث داخل قطاعات القرص عن تواقيع الملفات (File Signatures)، ويستخدم بعد الفورمات أو الحذف القديم.</li>
+            </ul>
+
+            <div class="alert-box">
+                <h4>⚠️ القاعدة الذهبية للمحقق</h4>
+                لا تقم أبداً بحفظ الملفات المسترجعة على نفس القرص الذي تقوم بفحصه! حفظ الملفات على نفس القرص سيؤدي إلى الكتابة فوق البيانات المحذوفة (Overwriting) وتدميرها للأبد.
+            </div>
+
+            <h3>💻 محاكي Disk Digger</h3>
+            <p>اختر قرص المشتبه به (USB Drive)، ثم نفذ الفحص العميق (Deep Scan) وحاول استعادة الملفات.</p>
+            
+            <div class="dd-gui">
+                <div class="dd-header">
+                    <span style="font-weight: bold; color: #1e293b;">Disk Digger Forensics Edition</span>
+                    <div>
+                        <button class="sim-btn" onclick="runScan('basic')">Basic Scan</button>
+                        <button class="sim-btn" onclick="runScan('deep')" style="background: #eab308;">Deep Scan</button>
+                    </div>
+                </div>
+                <div class="dd-main">
+                    <div class="dd-drives">
+                        <div class="drive-item" onclick="selectDrive(this)">Local Disk (C:)</div>
+                        <div class="drive-item" onclick="selectDrive(this)">Data (D:)</div>
+                        <div class="drive-item active" onclick="selectDrive(this)">USB Drive (E:) [Suspect]</div>
+                    </div>
+                    <div class="dd-files" id="dd-results">
+                        <i>Select a drive and start a scan...</i>
+                    </div>
+                </div>
+            </div>
+            <div class="forensic-note" id="dd-note" style="display: none;"></div>
+        </section>
+
+        <section id="section2" class="content-card">
+            <h2>2. التصوير الجنائي (FTK Imager)</h2>
+            <p>المحقق الرقمي لا يعمل أبداً على دليل أصلي لكي لا يغير بياناته. بدلاً من ذلك، يقوم بإنشاء <b>نسخة جنائية (Forensic Image)</b> مطابقة للقرص الأصلي بتًا ببت (Bit-by-Bit).</p>
+            <p>لضمان أن النسخة الجنائية لم يتم التلاعب بها وأنها مطابقة للأصل، يتم توليد قيمة رياضية فريدة تسمى <b>Hash (مثل MD5 أو SHA1)</b>.</p>
+
+            <h3>💻 محاكي FTK Imager</h3>
+            <p>اتبع الخطوات لإنشاء نسخة جنائية لقرص المشتبه به وتوليد الهاش الخاص بها.</p>
+            
+            <div class="ftk-gui">
+                <div id="ftk-step-1" class="ftk-step active">
+                    <h3>Step 1: Select Source Drive</h3>
+                    <select id="ftk-source" style="padding: 10px; width: 60%; margin-bottom: 20px;">
+                        <option>Physical Drive 1 - 500GB (Suspect HDD)</option>
+                        <option>Logical Drive C:\</option>
+                    </select><br>
+                    <button class="sim-btn" onclick="nextFtkStep(2)">Next ></button>
+                </div>
+                <div id="ftk-step-2" class="ftk-step">
+                    <h3>Step 2: Select Image Destination Format</h3>
+                    <p>What format do you want to create?</p>
+                    <select id="ftk-format" style="padding: 10px; width: 60%; margin-bottom: 20px;">
+                        <option value="e01">E01 (EnCase Image Format) - Compressed</option>
+                        <option value="raw">Raw (dd) - Uncompressed</option>
+                    </select><br>
+                    <button class="sim-btn" onclick="nextFtkStep(1)">< Back</button>
+                    <button class="sim-btn" onclick="startFtkImaging()">Finish (Start Imaging)</button>
+                </div>
+                <div id="ftk-step-3" class="ftk-step">
+                    <h3>Creating Forensic Image...</h3>
+                    <div class="progress-bar"><div class="progress-fill" id="ftk-progress"></div></div>
+                    <p id="ftk-status">Reading source sectors...</p>
+                </div>
+                <div id="ftk-step-4" class="ftk-step">
+                    <h3 style="color: var(--success);">Image Created Successfully</h3>
+                    <div class="hash-box">
+                        Image File: suspect_drive.<span id="ftk-ext">E01</span><br>
+                        Verify Hash: <span style="color: white;">Enabled</span><br>
+                        Computed MD5 Hash: <strong style="color: #fbbf24;">d41d8cd98f00b204e9800998ecf8427e</strong><br>
+                        Reported MD5 Hash: <strong style="color: #fbbf24;">d41d8cd98f00b204e9800998ecf8427e</strong><br>
+                        <span style="color: var(--success);">MATCH! Evidence Integrity Verified.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="forensic-note">
+                <strong>🔍 التحليل الجنائي (FTK Imager):</strong> امتداد <b>E01</b> هو الأفضل لأنه يضغط البيانات ويحتفظ بقيم الهاش بداخل الملف نفسه. تطابق الهاش (MATCH) هو دليلك أمام المحكمة بأن النسخة التي تعمل عليها هي صورة طبق الأصل.
+            </div>
+        </section>
+
+        <section id="section3" class="content-card">
+            <h2>3. إدارة القضايا وتحليل الأدلة (EnCase)</h2>
+            <p>بعد أخذ النسخة الجنائية، نستخدم برامج مثل EnCase لفتح هذه النسخة وتحليلها دون تشغيل نظام المشتبه به. يبدأ العمل بإنشاء <b>قضية جديدة (New Case)</b> لضمان تنظيم الأدلة.</p>
+
+            <h3>💻 محاكي EnCase Forensics المتقدم</h3>
+            <p>تصفح المجلدات على اليسار واضغط على مجلد <b>Windows</b> ومجلد <b>Users</b>. ثم <b>اضغط على الملفات</b> التي تظهر لترى تحليلها السداسي العشري (Hex) والشرح الجنائي الخاص بها.</p>
+            
+            <div class="encase-gui">
+                <div class="encase-tree">
+                    <b>📁 Case: 2026-001</b>
+                    <div class="tree-node" onclick="showEncaseFolder('root', this)">[-] Evidence 1 (E01)</div>
+                    <div class="tree-node" style="margin-left: 20px;" onclick="showEncaseFolder('windows', this)">📁 Windows</div>
+                    <div class="tree-node" style="margin-left: 20px;" onclick="showEncaseFolder('users', this)">📁 Users</div>
+                    <div class="tree-node" style="margin-left: 30px;" onclick="showEncaseFolder('documents', this)">📁 Documents</div>
+                </div>
+                <div class="encase-main">
+                    <div class="encase-toolbar">
+                        <button class="sim-btn" style="background: #64748b; font-size: 12px;">Add Evidence</button>
+                        <button class="sim-btn" style="background: #64748b; font-size: 12px;">Search (Grep)</button>
+                    </div>
+                    <div class="encase-content" id="encase-table">
+                        <i>Select a folder from the Evidence Tree...</i>
+                    </div>
+                    <div class="hex-viewer" id="encase-hex">
+                        00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|<br>
+                        <i>Select a file to view Hex data...</i>
+                    </div>
+                </div>
+            </div>
+            <div class="forensic-note dynamic" id="encase-dynamic-note">
+                <strong>💡 توجيه للمحقق:</strong> اختر المجلدات ثم اضغط على الملفات لاستكشاف أهميتها في التحقيق الرقمي.
+            </div>
+        </section>
+
+        <section id="lab" class="content-card lab-section">
+            <h2>🔬 المختبر الشامل للمحور الثالث</h2>
+            <p>أجب عن الأسئلة الجنائية التالية لاختبار فهمك لأساسيات التعامل مع الأدلة:</p>
+
+            <div class="question">
+                <label>1. في برنامج Disk Digger، ما نوع الفحص الذي ستستخدمه لاسترجاع ملفات بعد عمل فورمات للقرص؟</label>
+                <input type="text" id="q1" placeholder="اكتب نوع الفحص بالإنجليزية...">
+                <div id="fb1" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>2. كقاعدة جنائية، أين يجب أن تحفظ الملفات التي استرجعتها من قرص المشتبه به؟</label>
+                <input type="text" id="q2" placeholder="اكتب (نفس القرص) أو (قرص آخر)...">
+                <div id="fb2" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>3. في أداة FTK Imager، ما هو الامتداد المفضل للنسخة الجنائية والذي يحتوي على البيانات وقيم الهاش معاً؟</label>
+                <input type="text" id="q3" placeholder="أدخل الامتداد (مثال: txt, E01)...">
+                <div id="fb3" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>4. بناءً على محاكي EnCase، ما هو اسم الملف الموجود داخل مجلد Windows والذي يحتوي على كلمات المرور المشفرة؟</label>
+                <input type="text" id="q4" placeholder="اكتب اسم الملف بالإنجليزية...">
+                <div id="fb4" class="feedback"></div>
+            </div>
+
+            <div class="question">
+                <label>5. بناءً على محاكي EnCase، ما هو اسم الملف الموجود داخل مجلد Users والذي يمثل "سجل نشاط المستخدم" وإعداداته؟</label>
+                <input type="text" id="q5" placeholder="اكتب اسم الملف بالإنجليزية...">
+                <div id="fb5" class="feedback"></div>
+            </div>
+
+            <button class="btn-submit" onclick="evaluateLab()">تحقق من إجاباتك كافة واعرض التفسير الجنائي</button>
+        </section>
+
+    </main>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. منطق محاكي Disk Digger
+        // ----------------------------------------------------
+        function selectDrive(elem) {
+            document.querySelectorAll('.drive-item').forEach(e => e.classList.remove('active'));
+            elem.classList.add('active');
+            document.getElementById('dd-results').innerHTML = '<i>Drive selected. Ready for scan.</i>';
+            document.getElementById('dd-note').style.display = 'none';
+        }
+
+        function runScan(type) {
+            const results = document.getElementById('dd-results');
+            const note = document.getElementById('dd-note');
+            results.innerHTML = '<i>Scanning sectors... Please wait.</i>';
+            
+            setTimeout(() => {
+                if(type === 'basic') {
+                    results.innerHTML = `
+                        <table class="file-table">
+                            <tr><th>File Name</th><th>Size</th><th>Condition</th></tr>
+                            <tr><td>report.docx</td><td>24 KB</td><td class="status-good">Excellent</td></tr>
+                            <tr><td>photo_01.jpg</td><td>1.2 MB</td><td class="status-good">Excellent</td></tr>
+                        </table>
+                        <br><button class="sim-btn" onclick="saveRecovered()">Save Recovered Files</button>
+                    `;
+                    note.innerHTML = "<strong>🔍 التحليل الجنائي:</strong> الفحص السريع وجد بعض الملفات الموجودة أصلاً أو المحذوفة للتو والتي لا تزال سجلاتها (MFT) موجودة.";
+                    note.style.display = 'block';
+                } else {
+                    results.innerHTML = `
+                        <table class="file-table">
+                            <tr><th>File Name</th><th>Size</th><th>Condition</th></tr>
+                            <tr><td>report.docx</td><td>24 KB</td><td class="status-good">Excellent</td></tr>
+                            <tr><td class="status-deleted">Sector_8812.pdf (Deleted)</td><td>4.1 MB</td><td class="status-deleted">Recoverable</td></tr>
+                            <tr><td class="status-deleted">IMG_secret.png (Deleted)</td><td>800 KB</td><td class="status-deleted">Recoverable</td></tr>
+                        </table>
+                        <br><button class="sim-btn" onclick="saveRecovered()">Save Recovered Files</button>
+                    `;
+                    note.innerHTML = "<strong>🔍 التحليل الجنائي:</strong> الفحص العميق تجاهل نظام الملفات وبحث عن 'تواقيع الملفات' (File Signatures)، ولهذا استطاع العثور على ملفات محذوفة من فترة (باللون الأحمر).";
+                    note.style.display = 'block';
+                }
+            }, 800);
+        }
+
+        function saveRecovered() {
+            alert("⚠️ تحذير جنائي: لقد ضغطت على زر الحفظ.\n\nالرجاء التأكد من اختيار (قرص خارجي أو فلاش ميموري خاص بالمحقق) لحفظ هذه الملفات. حفظها على نفس قرص المشتبه به سيدمر الأدلة الأصلية!");
+        }
+
+        // ----------------------------------------------------
+        // 2. منطق محاكي FTK Imager
+        // ----------------------------------------------------
+        function nextFtkStep(step) {
+            document.querySelectorAll('.ftk-step').forEach(e => e.classList.remove('active'));
+            document.getElementById('ftk-step-' + step).classList.add('active');
+        }
+
+        function startFtkImaging() {
+            nextFtkStep(3);
+            const format = document.getElementById('ftk-format').value;
+            const ext = format === 'e01' ? 'E01' : 'dd';
+            document.getElementById('ftk-ext').innerText = ext;
+            
+            let fill = document.getElementById('ftk-progress');
+            let status = document.getElementById('ftk-status');
+            let width = 0;
+            
+            fill.style.width = '0%';
+            status.innerText = 'Acquiring Image...';
+            
+            let interval = setInterval(() => {
+                width += 20;
+                fill.style.width = width + '%';
+                if(width >= 100) {
+                    clearInterval(interval);
+                    status.innerText = 'Verifying Hash...';
+                    setTimeout(() => {
+                        nextFtkStep(4);
+                    }, 1000);
+                }
+            }, 500);
+        }
+
+        // ----------------------------------------------------
+        // 3. منطق محاكي EnCase (المُحدَّث)
+        // ----------------------------------------------------
+        const encaseData = {
+            'root': '<i>Expand folders on the left to view specific system or user files.</i>',
+            'windows': `
+                <table class="file-table">
+                    <tr><th>Name</th><th>Ext</th><th>Logical Size</th><th>Created</th></tr>
+                    <tr onclick="showHex('SAM', '53 41 4D 00 00 00 00 00... (SAM Hive)', 'ملف <b>SAM</b>: هذا الملف الجوهري يحتوي على تجزئة (Hashes) كلمات المرور لجميع حسابات المستخدمين المحليين. استخراجه يعني أن المحقق يمكنه استخدام برامج كسر كلمات المرور للدخول لحسابات المشتبه به.')"><td class="status-deleted">SAM</td><td></td><td>256 KB</td><td>10/01/2026</td></tr>
+                    <tr onclick="showHex('SYSTEM', '52 45 47 46 00 00 00 00... (System Hive)', 'ملف <b>SYSTEM</b>: يحوي إعدادات النظام وتفاصيل الأجهزة التي اتصلت بالكمبيوتر. من خلاله يمكن للمحقق إثبات أن فلاش ميموري معين (USB) تم توصيله بهذا الجهاز بالتاريخ والوقت المحددين.')"><td>SYSTEM</td><td></td><td>8.5 MB</td><td>15/03/2026</td></tr>
+                    <tr onclick="showHex('CMD.EXE-083B1A62.pf', '11 00 00 00 43 4D 44 2E... (Prefetch)', 'ملفات <b>Prefetch (.pf)</b>: تُنشأ تلقائياً عند تشغيل أي برنامج. وجود هذا الملف يثبت للمحقق أن المستخدم قام بتشغيل أداة (cmd.exe) على هذا الجهاز، حتى لو قام بمسح البرنامج لاحقاً.')"><td>CMD.EXE-083B1A62</td><td>pf</td><td>12 KB</td><td>26/03/2026</td></tr>
+                </table>
+            `,
+            'users': `
+                <table class="file-table">
+                    <tr><th>Name</th><th>Ext</th><th>Logical Size</th><th>Created</th></tr>
+                    <tr onclick="showHex('NTUSER.DAT', '52 45 47 46 00 00 00 00... (User Registry)', 'ملف <b>NTUSER.DAT</b>: يعتبر كنزاً للمحقق! يمثل السجل الخاص بالمستخدم. يحتوي على قائمة بآخر الملفات التي فتحها (RecentDocs)، والبرامج التي شغّلها، وإعداداته الشخصية الدقيقة.')"><td class="status-deleted">NTUSER.DAT</td><td>DAT</td><td>1.2 MB</td><td>20/03/2026</td></tr>
+                    <tr onclick="showHex('History', '53 51 4C 69 74 65 20 66... (SQLite DB)', 'ملف <b>History</b>: قاعدة بيانات متصفح الإنترنت (غالباً Chrome أو Edge). استخراجه يتيح للمحقق معرفة كافة المواقع التي زارها المشتبه به والبحث الذي قام به على جوجل.')"><td>History</td><td></td><td>5 MB</td><td>27/03/2026</td></tr>
+                </table>
+            `,
+            'documents': `
+                <table class="file-table">
+                    <tr><th>Name</th><th>Ext</th><th>Logical Size</th><th>Created</th></tr>
+                    <tr onclick="showHex('Invoice.pdf', '25 50 44 46 2D 31 2E 34... (PDF Header)', 'ملف PDF عادي: لاحظ بداية التوقيع السداسي العشري (25 50 44 46) والتي تعني %PDF. هذا يثبت أن الملف هو فعلاً ملف PDF وليس ملفاً خبيثاً تم تغيير امتداده.')"><td>Invoice</td><td>pdf</td><td>450 KB</td><td>12/03/2026</td></tr>
+                    <tr onclick="showHex('Secret_Passwords.txt', '61 64 6D 69 6E 3A 31 32... (admin:12345)', 'ملف نصي محذوف (باللون الأحمر): تمكن برنامج EnCase من إظهاره لأنه يقرأ النسخة الجنائية بالكامل متجاوزاً قيود الويندوز.')"><td class="status-deleted">Secret_Passwords</td><td>txt</td><td>1 KB</td><td>15/03/2026</td></tr>
+                </table>
+            `
+        };
+
+        function showEncaseFolder(folder, element) {
+            // تظليل المجلد المختار
+            document.querySelectorAll('.tree-node').forEach(e => e.classList.remove('active'));
+            element.classList.add('active');
+            
+            // عرض الجدول
+            document.getElementById('encase-table').innerHTML = encaseData[folder] || '<i>Empty folder.</i>';
+            document.getElementById('encase-dynamic-note').innerHTML = "<strong>💡 توجيه للمحقق:</strong> اضغط على أي ملف في الجدول الأعلى لقراءة محتواه السداسي العشري (Hex) وفهم أهميته الجنائية.";
+        }
+
+        function showHex(filename, hexSnippet, analysis) {
+            document.getElementById('encase-hex').innerHTML = `
+                File: <b style="color:var(--accent-color);">${filename}</b><br>
+                00000000  ${hexSnippet}  |<br>
+                00000010  ...
+            `;
+            // عرض الشرح الجنائي الخاص بالملف
+            document.getElementById('encase-dynamic-note').innerHTML = `<strong>🔍 التحليل الجنائي:</strong> ${analysis}`;
+        }
+
+        // ----------------------------------------------------
+        // 4. تقييم المختبر الشامل والتفسير الجنائي
+        // ----------------------------------------------------
+        function evaluateLab() {
+            const q1 = document.getElementById('q1').value.trim().toLowerCase();
+            const q2 = document.getElementById('q2').value.trim();
+            const q3 = document.getElementById('q3').value.trim().toLowerCase();
+            const q4 = document.getElementById('q4').value.trim().toLowerCase();
+            const q5 = document.getElementById('q5').value.trim().toLowerCase();
+            
+            // Q1: Deep Scan
+            const fb1 = document.getElementById('fb1');
+            fb1.style.display = 'block';
+            if(q1 === 'deep scan' || q1 === 'deep') {
+                fb1.className = 'feedback correct';
+                fb1.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> الفحص العميق (Deep Scan) يبحث عن تواقيع الملفات في القطاعات لاستخراجها حتى بعد الفورمات.</div>`;
+            } else {
+                fb1.className = 'feedback wrong';
+                fb1.innerHTML = `❌ <b>خاطئ. الإجابة هي: Deep Scan</b><div class="explanation"><b>التفسير:</b> Basic scan يبحث فقط في الملفات المحذوفة حديثاً جداً.</div>`;
+            }
+
+            // Q2: قرص آخر
+            const fb2 = document.getElementById('fb2');
+            fb2.style.display = 'block';
+            if(q2.includes('اخر') || q2.includes('آخر') || q2.includes('خارجي')) {
+                fb2.className = 'feedback correct';
+                fb2.innerHTML = `✅ <b>صحيح ممتاز.</b><div class="explanation"><b>التفسير:</b> الحفظ على نفس القرص يكتب فوق البيانات المحذوفة (Overwriting)، مما يعني تدمير الدليل.</div>`;
+            } else {
+                fb2.className = 'feedback wrong';
+                fb2.innerHTML = `❌ <b>خاطئ. الإجابة هي: قرص آخر / قرص خارجي</b><div class="explanation"><b>التفسير:</b> إياك والحفظ على (نفس القرص) فهذه جريمة بحق الدليل الرقمي.</div>`;
+            }
+
+            // Q3: E01
+            const fb3 = document.getElementById('fb3');
+            fb3.style.display = 'block';
+            if(q3 === 'e01') {
+                fb3.className = 'feedback correct';
+                fb3.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> امتداد E01 (EnCase Image Format) هو المقياس الذهبي لأنه يضغط البيانات ويحفظ قيم الهاش للتأكيد.</div>`;
+            } else {
+                fb3.className = 'feedback wrong';
+                fb3.innerHTML = `❌ <b>خاطئ. الإجابة هي: E01</b><div class="explanation"><b>التفسير:</b> E01 هو المفضل لأنه يدعم الضغط ودمج الهاش تلقائياً.</div>`;
+            }
+
+            // Q4: SAM
+            const fb4 = document.getElementById('fb4');
+            fb4.style.display = 'block';
+            if(q4 === 'sam') {
+                fb4.className = 'feedback correct';
+                fb4.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> ملف <b>SAM</b> الموجود داخل مسارات الويندوز هو الهدف الأول لمحاولة كسر كلمات مرور المشتبه به.</div>`;
+            } else {
+                fb4.className = 'feedback wrong';
+                fb4.innerHTML = `❌ <b>خاطئ. الإجابة هي: SAM</b><div class="explanation"><b>التفسير:</b> ارجع لمحاكي Encase، مجلد Windows. ستجد أن ملف SAM هو المسؤول عن كلمات المرور.</div>`;
+            }
+
+            // Q5: NTUSER.DAT
+            const fb5 = document.getElementById('fb5');
+            fb5.style.display = 'block';
+            if(q5 === 'ntuser.dat' || q5 === 'ntuser') {
+                fb5.className = 'feedback correct';
+                fb5.innerHTML = `✅ <b>صحيح.</b><div class="explanation"><b>التفسير:</b> ملف <b>NTUSER.DAT</b> هو سجل (Registry) خاص بكل مستخدم على حدة، ويحتوي على نشاطاته الشخصية وإعداداته.</div>`;
+            } else {
+                fb5.className = 'feedback wrong';
+                fb5.innerHTML = `❌ <b>خاطئ. الإجابة هي: NTUSER.DAT</b><div class="explanation"><b>التفسير:</b> ارجع لمحاكي Encase، مجلد Users. ستجد أن ملف NTUSER.DAT هو المعني بتسجيل نشاط المستخدم.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
