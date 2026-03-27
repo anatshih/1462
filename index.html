@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية - الدليل العملي لمقرر التحقيقات والأدلة الرقمية (1462)</title>
+    <style>
+        /* إعدادات عامة */
+        :root {
+            --primary-bg: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --accent-color: #2563eb;
+            --accent-hover: #1d4ed8;
+            --text-main: #334155;
+            --text-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --warning-bg: #fffbeb;
+            --warning-border: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            flex-direction: row;
+        }
+
+        /* القائمة الجانبية */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background-color: #0f172a;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+        
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; margin-top: 15px;}
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px 20px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: background 0.3s;
+            border-right: 4px solid transparent;
+            font-size: 1.05rem;
+        }
+        .sidebar-menu li a:hover { background-color: var(--sidebar-hover); }
+        .sidebar-menu li a.active {
+            background-color: var(--sidebar-hover);
+            border-right-color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .sidebar-divider {
+            height: 1px;
+            background-color: #334155;
+            margin: 10px 20px;
+        }
+
+        /* منطقة المحتوى الرئيسي */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        /* الترويسة الأكاديمية (Hero Section) */
+        .hero-section {
+            background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+        .hero-section h1 { margin: 0 0 10px; font-size: 2rem; }
+        .hero-section h2 { margin: 0 0 20px; font-weight: normal; font-size: 1.5rem; color: #e2e8f0; }
+        .hero-section .instructor {
+            display: inline-block;
+            background-color: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* التنويه الهام */
+        .disclaimer-card {
+            background-color: var(--warning-bg);
+            border-right: 5px solid var(--warning-border);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .disclaimer-card h3 { color: #b45309; margin-top: 0; display: flex; align-items: center; gap: 8px; }
+        .disclaimer-card ul { margin: 0; padding-right: 20px; line-height: 1.8; color: #78350f; }
+        .disclaimer-card li strong { color: #92400e; }
+        .wish-text { text-align: center; font-weight: bold; color: #b45309; margin-top: 15px; font-size: 1.1rem; }
+
+        /* شبكة المحاور (Dashboard Grid) */
+        .axes-header { text-align: center; margin-bottom: 25px; color: var(--sidebar-bg); }
+        .axes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        /* بطاقة المحور (Clickable Card) */
+        .axis-card {
+            background-color: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 25px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        .axis-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; left: 0;
+            height: 4px;
+            background-color: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: right;
+        }
+        .axis-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
+        }
+        .axis-card:hover::before { transform: scaleX(1); }
+        .axis-card h3 { color: var(--accent-color); margin-top: 0; margin-bottom: 10px; font-size: 1.3rem; }
+        .axis-card p { flex-grow: 1; color: #64748b; line-height: 1.6; margin-bottom: 20px; }
+        .axis-card .enter-btn {
+            background-color: #f1f5f9;
+            color: var(--accent-color);
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .axis-card:hover .enter-btn { background-color: var(--accent-color); color: white; }
+
+        /* تنسيق خاص للبطاقات الإضافية (الملفات) */
+        .file-card::before { background-color: #10b981; }
+        .file-card h3 { color: #059669; }
+        .file-card:hover .enter-btn { background-color: #10b981; color: white; }
+        .file-card .enter-btn { color: #059669; background-color: #ecfdf5; }
+
+        .pdf-card::before { background-color: #ef4444; }
+        .pdf-card h3 { color: #dc2626; }
+        .pdf-card:hover .enter-btn { background-color: #ef4444; color: white; }
+        .pdf-card .enter-btn { color: #dc2626; background-color: #fef2f2; }
+
+        /* ==================================================== */
+        /* استجابة الموبايل والتابلت (Responsive Media Queries) */
+        /* ==================================================== */
+        
+        /* تعديلات لشاشات التابلت */
+        @media screen and (max-width: 992px) {
+            .sidebar { width: 220px; }
+            .sidebar-menu li a { font-size: 0.95rem; padding: 12px 15px; }
+            .hero-section h1 { font-size: 1.7rem; }
+        }
+
+        /* تعديلات لشاشات الموبايل */
+        @media screen and (max-width: 768px) {
+            body {
+                flex-direction: column; /* تحويل التخطيط إلى عمودي */
+                height: auto;
+                overflow-y: auto;
+            }
+
+            /* القائمة الجانبية تصبح علوية */
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: none;
+            }
+            
+            .sidebar-header {
+                padding: 15px;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: 0;
+            }
+
+            .sidebar-menu li {
+                flex: 1 1 50%; /* كل زرين في سطر */
+                text-align: center;
+                border-bottom: 1px solid #334155;
+            }
+
+            .sidebar-menu li a {
+                padding: 12px 10px;
+                font-size: 0.9rem;
+                border-right: none; /* إزالة الخط الجانبي */
+            }
+
+            .sidebar-menu li a.active {
+                border-right: none;
+                border-bottom: 3px solid var(--accent-color); /* تحويل التفعيل إلى خط سفلي */
+            }
+            
+            .sidebar-divider {
+                display: none; /* إخفاء الفواصل في الموبايل لتوفير المساحة */
+            }
+
+            /* تصغير الهوامش للمحتوى الرئيسي */
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .hero-section {
+                padding: 25px 15px;
+            }
+
+            .hero-section h1 {
+                font-size: 1.4rem;
+            }
+
+            .hero-section h2 {
+                font-size: 1.1rem;
+            }
+
+            /* البطاقات تصبح عمودية تماماً */
+            .axes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .axis-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>التحقيقات والأدلة الرقمية</h2>
+            <p>1462</p>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="index.html" class="active">🏠 الصفحة الرئيسية</a></li>
+            <li><a href="network.html">🌐 المحور الأول: الشبكات</a></li>
+            <li><a href="system.html">💻 المحور الثاني: النظام والسجلات</a></li>
+            <li><a href="evidence.html">💾 المحور الثالث: الأدلة والاسترجاع</a></li>
+            <li><a href="files.html">📁 المحور الرابع: فحص الملفات</a></li>
+            
+            <div class="sidebar-divider"></div>
+            
+            <li><a href="practical.html" style="color: #60a5fa;">📋 تعليمات الامتحان العملي</a></li>
+            
+            <div class="sidebar-divider"></div>
+            
+            <li><a href="a.html" target="_blank">🖥️ العرض التقديمي</a></li>
+            <li><a href="1.pdf" target="_blank">📄 الملف النظري (1)</a></li>
+            <li><a href="2.pdf" target="_blank">📄 الملف النظري (2)</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="hero-section">
+            <h2>🎓 جامعة القدس المفتوحة — فرع الخليل</h2>
+            <h1>📘 الدليل العملي لمقرر التحقيقات والأدلة الرقمية</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 20px;">رقم المقرر 1462</p>
+            <div class="instructor">إعداد: أ. أحمد عوني النتشة</div>
+        </div>
+
+        <div class="disclaimer-card">
+            <h3>⚠️ تنويه هام للطلبة</h3>
+            <ul>
+                <li><strong>طبيعة المنصة:</strong> هذا الموقع مجهود شخصي تعليمي ولا يمثل الصفة الرسمية لجامعة القدس المفتوحة.</li>
+                <li><strong>الهدف:</strong> يهدف الموقع إلى مساعدة الطلبة في فهم واستيعاب الجانب العملي للمقرر بشكل مبسط.</li>
+                <li><strong>الشروحات:</strong> سيتم تقديم شروحات تفصيلية ومتابعة المحاضرات من خلال حلقات النقاش المخصصة.</li>
+                <li><strong>المرجع الرسمي:</strong> هذا المحتوى وسيلة مساعدة فقط، وليس بديلاً عن البوابة الأكاديمية الرسمية؛ لذا يرجى متابعة كافة الإعلانات والقرارات الرسمية من خلالها.</li>
+            </ul>
+            <div class="wish-text">🌟 مع تمنياتنا لجميع الطلبة بالتوفيق والنجاح 🌟</div>
+        </div>
+
+        <h2 class="axes-header">الرجاء اختيار المحور للبدء بالتعلم والتطبيق</h2>
+        
+        <div class="axes-grid">
+            
+            <a href="network.html" class="axis-card">
+                <h3>المحور الأول: تحليل الشبكات والاتصالات</h3>
+                <p>يغطي هذا المحور أدوات فحص الاتصال الأساسية مثل (ipconfig, ping, tracert) وأدوات التحليل المتقدم للبيانات واكتشاف المنافذ مثل (Wireshark, Nmap).</p>
+                <div class="enter-btn">الدخول للمحور ➔</div>
+            </a>
+
+            <a href="system.html" class="axis-card">
+                <h3>المحور الثاني: مراقبة النظام وسجلاته</h3>
+                <p>يتناول هذا المحور مراقبة العمليات والذاكرة والاتصالات عبر حزمة (Sysinternals)، بالإضافة إلى تتبع التسلسل الزمني للأحداث الأمنية عبر (Event Viewer).</p>
+                <div class="enter-btn">الدخول للمحور ➔</div>
+            </a>
+
+            <a href="evidence.html" class="axis-card">
+                <h3>المحور الثالث: التعامل مع الأدلة الرقمية</h3>
+                <p>يركز هذا المحور على استعادة الملفات المحذوفة (Disk Digger)، وأخذ النسخ الجنائية الآمنة (FTK Imager)، وإدارة القضايا الرقمية باحترافية (Encase).</p>
+                <div class="enter-btn">الدخول للمحور ➔</div>
+            </a>
+
+            <a href="files.html" class="axis-card">
+                <h3>المحور الرابع: فحص الملفات ونشاط المستخدم</h3>
+                <p>يهدف هذا المحور إلى فحص سجلات التصفح (Browser History)، التعامل مع الأقراص المشفرة (VeraCrypt)، وتحليل بنية الملفات التنفيذية (PE Explorer).</p>
+                <div class="enter-btn">الدخول للمحور ➔</div>
+            </a>
+
+        </div>
+
+        <h2 class="axes-header" style="margin-top: 50px; border-top: 2px dashed #cbd5e1; padding-top: 30px;">المواد التعليمية والملفات المرفقة</h2>
+        
+        <div class="axes-grid">
+            
+            <a href="a.html" target="_blank" class="axis-card file-card">
+                <h3>🖥️ العرض التقديمي للبرامج</h3>
+                <p>الدليل العملي التفاعلي للأدوات والبرامج المستخدمة في التحقيق الرقمي، يشمل صور الشاشات وواجهات الاستخدام للتطبيق العملي.</p>
+                <div class="enter-btn">عرض الشرائح ➔</div>
+            </a>
+
+            <a href="1.pdf" target="_blank" class="axis-card pdf-card">
+                <h3>📄 الملف النظري الأول</h3>
+                <p>مادة إثرائية بصيغة PDF تتضمن المفاهيم الأساسية للتحقيقات الرقمية والأسس النظرية للمقرر.</p>
+                <div class="enter-btn">فتح الملف ➔</div>
+            </a>
+
+            <a href="2.pdf" target="_blank" class="axis-card pdf-card">
+                <h3>📄 الملف النظري الثاني</h3>
+                <p>ملف PDF يحتوي على حالات دراسية عملية، أمثلة تطبيقية، وإجراءات التعامل مع الأدلة الرقمية.</p>
+                <div class="enter-btn">فتح الملف ➔</div>
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+</html>
