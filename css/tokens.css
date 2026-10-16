@@ -1,0 +1,151 @@
+/* Design tokens — the only place colors/sizes are defined (CLAUDE.md §11). */
+:root {
+  /* typography */
+  --font-ui-ar: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+  --font-win: "Segoe UI", system-ui, Tahoma, sans-serif;
+  --font-mono: Consolas, "Cascadia Mono", "DejaVu Sans Mono", monospace;
+  --fs-body: 1.0625rem;      /* 17px >= 16px */
+  --lh-body: 1.7;
+  --fs-small: 0.9375rem;
+  --fs-h1: 2rem;
+  --fs-h2: 1.5rem;
+  --fs-h3: 1.2rem;
+
+  /* spacing / shape */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2.5rem;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --touch: 44px;
+  --content-w: 1240px;
+
+  /* light theme (site UI) */
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --border: #c5cfdb;
+  --text: #17202b;
+  --text-muted: #44505f;
+  --primary: #1d4ed8;          /* blue = current / interpretation */
+  --primary-soft: #e3ebff;
+  --on-primary: #ffffff;
+  --success: #166534;          /* green = done */
+  --success-soft: #dcf5e4;
+  --warn: #7a4a00;             /* yellow = notice */
+  --warn-soft: #fff1c2;
+  --danger: #a61b1b;           /* red = risk indicator only */
+  --danger-soft: #fde1e1;
+  --focus: #b45309;
+  --banner-bg: #3b2a00;
+  --banner-text: #fff7de;
+  --banner-link: #ffd36b;
+  --shadow: 0 2px 10px rgba(15, 30, 55, 0.12);
+
+  /* tool windows — native colours, NOT affected by the site theme (CLAUDE.md §8) */
+  --win-frame: #f3f3f3;
+  --win-frame-text: #1a1a1a;
+  --win-frame-border: #8a8a8a;
+  --win-title-inactive: #ebebeb;
+  --win-surface: #ffffff;
+  --win-surface-text: #000000;
+  --win-menu-bg: #ffffff;
+  --win-menu-hover: #e5f3ff;
+  --win-select: #cce8ff;
+  --win-select-text: #000000;
+  --win-disabled: #8c8c8c;
+  --win-grid-line: #e0e0e0;
+  --win-header-bg: #f0f0f0;
+  --win-close-hover: #c42b1c;
+  --win-badge-bg: #fff4c2;
+  --win-badge-text: #5c4300;
+  --win-badge-border: #c9a400;
+  --cmd-bg: #0c0c0c;
+  --cmd-text: #cccccc;
+  --cmd-note: #7fb7ff;
+  --kali-frame: #1b1e24;
+  --kali-frame-text: #e6e6e6;
+  --kali-bg: #14161b;
+  --kali-text: #d6d6d6;
+  --kali-prompt-blue: #5aa9ff;
+  --kali-prompt-green: #4ee08a;
+  --ar-header-bg: #e6e0f5;       /* Autoruns: location header (light purple) */
+  --ar-pink: #ffc7ce;            /* Autoruns: no verified publisher */
+  --ar-yellow: #fff59b;          /* Autoruns: file not found */
+  --ar-tab-active: #ffffff;
+  --ar-tab-bg: #e1e1e1;
+  --annot-bg: #fff3b0;
+  --annot-border: #b8860b;
+  --hl-outline: #ff7a00;
+}
+
+/* dark theme (site UI only). Applied by toggle or system preference. */
+:root[data-theme="dark"] {
+  --bg: #0e1520;
+  --surface: #162130;
+  --surface-2: #1d2b3d;
+  --border: #3a4c63;
+  --text: #e8eef5;
+  --text-muted: #b2bfce;
+  --primary: #8db4ff;
+  --primary-soft: #1d3157;
+  --on-primary: #0b1220;
+  --success: #6ee79a;
+  --success-soft: #153a26;
+  --warn: #ffd978;
+  --warn-soft: #3b2f0b;
+  --danger: #ff9a93;
+  --danger-soft: #431a1a;
+  --focus: #ffc266;
+  --banner-bg: #2a2000;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1520;
+    --surface: #162130;
+    --surface-2: #1d2b3d;
+    --border: #3a4c63;
+    --text: #e8eef5;
+    --text-muted: #b2bfce;
+    --primary: #8db4ff;
+    --primary-soft: #1d3157;
+    --on-primary: #0b1220;
+    --success: #6ee79a;
+    --success-soft: #153a26;
+    --warn: #ffd978;
+    --warn-soft: #3b2f0b;
+    --danger: #ff9a93;
+    --danger-soft: #431a1a;
+    --focus: #ffc266;
+    --banner-bg: #2a2000;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Sysinternals / Event Viewer native colours (not affected by the site theme) */
+:root {
+  --tv-green: #b9f0b9;
+  --tv-yellow: #fff59b;
+  --tv-red: #ffb7b7;
+  --ev-pane: #f7f7f7;
+  --ev-tree-sel: #cce8ff;
+  --ev-fail: #a61b1b;
+  --ev-ok: #1a6b2c;
+  --pm-bar: #f0f0f0;
+}
+
+/* Wireshark default colouring rules (⚠️ ui-reference §3) and filter-bar states */
+:root {
+  --ws-tcp: #e7e6ff;
+  --ws-udp: #daeeff;
+  --ws-arp: #faf0d7;
+  --ws-syn: #a0a0a0;
+  --ws-http: #e4ffc7;
+  --ws-ok: #afffaf;
+  --ws-bad: #ffafaf;
+}
