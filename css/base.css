@@ -63,7 +63,9 @@ img, svg { max-inline-size: 100%; }
 /* ---- site header / nav ---- */
 .site-header { background: var(--surface); border-block-end: 1px solid var(--border); }
 .site-header .container { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); padding-block: var(--sp-3); }
-.brand { font-weight: 700; font-size: 1.15rem; color: var(--text); text-decoration: none; margin-inline-end: auto; }
+.brand { font-weight: 700; font-size: clamp(1.2rem, 2.3vw, 1.6rem); color: var(--text); text-decoration: none; margin-inline-end: auto; max-inline-size: 100%; }
+.course-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2) var(--sp-3); line-height: 1.5; }
+.course-number { white-space: nowrap; color: var(--primary); font-size: 0.85em; }
 .brand small { display: block; font-weight: 400; font-size: 0.8rem; color: var(--text-muted); }
 .site-nav { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
 .site-nav a {
