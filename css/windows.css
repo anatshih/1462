@@ -22,7 +22,7 @@
 .fw-ctl button:hover { background: rgba(0, 0, 0, 0.08); }
 .fw-ctl button.fw-close:hover { background: var(--win-close-hover); color: #fff; }
 .fw-ctl svg { inline-size: 10px; block-size: 10px; stroke: currentColor; fill: none; stroke-width: 1; }
-.fw-body { flex: 1; min-block-size: 0; display: flex; flex-direction: column; background: var(--win-surface); color: var(--win-surface-text); }
+.fw-body { flex: 1; min-block-size: 0; display: flex; flex-direction: column; background: var(--win-surface); color: var(--win-surface-text); overflow: auto; } /* a window fitted to a narrow work area scrolls inside instead of clipping */
 .fw[data-skin="kali"] { background: var(--kali-frame); color: var(--kali-frame-text); border-color: #000; }
 .fw[data-skin="kali"] .fw-title { background: var(--kali-frame); }
 .fw[data-skin="kali"] .fw-ctl button:hover { background: rgba(255, 255, 255, 0.12); }

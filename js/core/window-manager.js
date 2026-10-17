@@ -38,6 +38,34 @@
     var zTop = 10;
     var count = 0;
 
+    /* Fit a window to the work area: never larger than the stage (title bar and buttons always visible), and in
+       full-screen mode enlarged in proportion (up to 1.6×) to use the extra space. On phones (narrow stage) the
+       window keeps its real width and the stage scrolls instead (CLAUDE.md §11). Recomputed when the stage resizes. */
+    function fitOne(win) {
+      var el = win.el, cw = container.clientWidth, ch = container.clientHeight;
+      var W = win.pref.w, H = win.pref.h;
+      var desk = window.innerWidth >= 768; // phones keep the real width (the stage scrolls); laptops fit the stage even when it is narrow
+      if (ch <= 300) { el.style.width = W + "px"; el.style.height = H + "px"; return; }
+      if (container.closest(".is-focus")) {
+        var s = Math.min((cw - 40) / W, (ch - 40) / H, 1.6);
+        if (s > 1) { W = Math.round(W * s); H = Math.round(H * s); }
+      }
+      if (desk) W = Math.min(W, cw - 12);
+      H = Math.min(H, ch - 12);
+      el.style.width = W + "px"; el.style.height = H + "px";
+      if (desk) el.style.left = Math.max(4, Math.min(parseInt(el.style.left, 10) || 0, cw - W - 6)) + "px";
+      el.style.top = Math.max(4, Math.min(parseInt(el.style.top, 10) || 0, ch - H - 6)) + "px";
+    }
+    function fitAll() { Object.keys(wins).forEach(function (k) { fitOne(wins[k]); }); }
+    var pending = false, observer = null;
+    if (window.ResizeObserver) {
+      observer = new ResizeObserver(function () {
+        if (pending) return; pending = true;
+        window.requestAnimationFrame(function () { pending = false; fitAll(); });
+      });
+      observer.observe(container);
+    }
+
     function create(opts) {
       if (wins[opts.id]) { wins[opts.id].open(); return wins[opts.id]; }
       var body = h("div.fw-body");
@@ -57,21 +85,12 @@
       var off = (count++ % 5) * 28;
       el.style.left = (opts.x != null ? opts.x : 14 + off) + "px";
       el.style.top = (opts.y != null ? opts.y : 14 + off) + "px";
-      el.style.width = (opts.width || 720) + "px";
-      el.style.height = (opts.height || 480) + "px";
       el.style.zIndex = ++zTop;
       container.appendChild(el);
-      /* keep every window fully inside the work area (no hidden title bars or buttons); on phones the stage scrolls instead */
-      var cw = container.clientWidth, ch = container.clientHeight;
-      if (ch > 300) {
-        var W = cw >= 700 ? Math.min(opts.width || 720, cw - 12) : (opts.width || 720), H = Math.min(opts.height || 480, ch - 12);
-        el.style.width = W + "px"; el.style.height = H + "px";
-        if (cw >= 700) el.style.left = Math.max(4, Math.min(parseInt(el.style.left, 10), cw - W - 6)) + "px";
-        el.style.top = Math.max(4, Math.min(parseInt(el.style.top, 10), ch - H - 6)) + "px";
-      }
 
       var win = {
         id: opts.id, el: el, body: body, isOpen: true,
+        pref: { w: opts.width || 720, h: opts.height || 480 },
         focus: function () {
           el.style.zIndex = ++zTop;
           Object.keys(wins).forEach(function (k) { wins[k].el.classList.toggle("is-inactive", wins[k] !== win); });
@@ -92,6 +111,7 @@
         toggleMax: function () { el.classList.toggle("is-max"); win.focus(); }
       };
       wins[opts.id] = win;
+      fitOne(win);
 
       closeBtn.addEventListener("click", win.close);
       minBtn.addEventListener("click", win.minimize);
@@ -120,6 +140,8 @@
 
     return {
       create: create,
+      fit: fitAll,
+      destroy: function () { if (observer) observer.disconnect(); },
       get: function (id) { return wins[id] || null; },
       isOpen: function (id) { return !!(wins[id] && wins[id].isOpen); },
       list: function () { return Object.keys(wins).map(function (k) { return wins[k]; }); }

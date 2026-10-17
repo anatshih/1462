@@ -247,6 +247,7 @@
     function teardownPractice() {
       if (watchCancel) { watchCancel(); watchCancel = null; }
       if (stepper) { stepper.destroy(); stepper = null; }
+      if (stage) { stage.destroy(); stage = null; }
     }
 
     build.practice = function () {
@@ -386,6 +387,7 @@
       grid.classList.toggle("is-focus", on); document.body.classList.toggle("fsim-focus", on);
       var b = grid.querySelector("[data-focus-toggle]"); if (b) { b.setAttribute("aria-pressed", String(on)); b.textContent = on ? "✕ إنهاء ملء الشاشة" : "⛶ ملء الشاشة"; }
       if (on) document.addEventListener("keydown", onEsc); else document.removeEventListener("keydown", onEsc);
+      if (stage) stage.fit(); // windows grow with the full-screen work area and shrink back after it
     }
 
     function runDemo(st) {

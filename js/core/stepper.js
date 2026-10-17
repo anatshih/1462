@@ -93,7 +93,7 @@
       var prevLi = items[idx];
       prevLi.classList.add("just-done"); setTimeout(function () { prevLi.classList.remove("just-done"); }, 1400);
       progress.textContent = "✔ أُنجزت الخطوة " + (idx + 1);
-      idx++; hintLevel = 0;
+      idx++; hintLevel = 0; misses = 0;
       if (idx >= steps.length) { finished = true; render(); if (opts.onComplete) opts.onComplete(); }
       else { render(); if (opts.onStep) opts.onStep(steps[idx], idx); }
     }
@@ -115,12 +115,29 @@
       return null;
     }
 
+    /* an action that belongs to a later step (done too early): index of that step, or -1 */
+    function laterStep(name, payload) {
+      for (var j = idx + 1; j < steps.length; j++) if (matches(steps[j], name, payload) === true) return j;
+      return -1;
+    }
+    var misses = 0; // actions of another kind since the current step started (they used to pass silently)
+    function stepLabel(i) { return "«" + (steps[i].title || steps[i].instruction) + "»"; }
+
     offs.push(bus.on("*", function (name, payload) {
       if (finished || idx >= steps.length) return;
+      if (/^window:/.test(name)) return; // focusing / moving windows is not an answer
       var st = steps[idx];
       var r = matches(st, name, payload);
-      if (r === true) { advance(); }
-      else if (r === "state") { feedback("الأمر صحيح لكن حالة الجهاز الحالية ليست المطلوبة في هذه الخطوة. راجع تعليمة الخطوة."); }
+      if (r === true) { misses = 0; advance(); return; }
+      if (mode === "guided" && (r === false || r === null)) {
+        var j = laterStep(name, payload);
+        if (j > idx) { feedback("هذا الإجراء صحيح، لكنه للخطوة " + (j + 1) + " " + stepLabel(j) + ". أنهِ أولاً الخطوة " + (idx + 1) + ": " + stepLabel(idx) + "، ثم أعد هذا الإجراء."); return; }
+      }
+      if (r === "state") { feedback("الأمر صحيح لكن حالة الجهاز الحالية ليست المطلوبة في هذه الخطوة. راجع تعليمة الخطوة."); }
+      else if (r === null) {
+        // a different kind of action: no message for the first ones (they may be on the way to the answer), then a gentle reminder
+        if (mode === "guided" && ++misses >= 3) { misses = 0; feedback("لم تُنجز هذه الخطوة بعد. المطلوب الآن: " + stepLabel(idx) + ". إن احتجت مساعدة فاضغط «تلميح»."); }
+      }
       else if (r === false) {
         if (st.expect.type === "command") feedback(st.onMismatch || "الأمر نُفِّذ، لكنه ليس المطلوب في هذه الخطوة. اقرأ التعليمة مرة أخرى أو اطلب تلميحاً.");
         else feedback(st.onMismatch || "هذا الإجراء ليس المطلوب في هذه الخطوة. اقرأ التعليمة مرة أخرى أو اطلب تلميحاً.");
