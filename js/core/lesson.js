@@ -53,19 +53,24 @@
     return box;
   }
 
-  /* concept card body rows (the fixed 7-part order) */
-  function cardRows(c, withQuiz, quizDone, alreadyDone) {
-    var rows = [
-      ["① التشبيه", c.analogy], ["② المعنى العملي", c.meaning], ["③ كيف تراه في الأداة", c.inTool, "tool"],
-      ["④ لماذا يهم المحقق", c.forInvestigator], ["⑤ مثال من القضية", c.fromCase], ["⑥ خطأ شائع", c.mistake, "mistake"]
-    ];
-    var frag = document.createDocumentFragment();
-    rows.forEach(function (r) {
+  /* concept card body rows (the fixed 7-part order). ①–③ are always shown; ④–⑥ (the detail) sit under «اعرف أكثر»
+     so a self-learning student reads the essentials first without losing any detail. openMore shows them unfolded. */
+  function cardRows(c, withQuiz, quizDone, alreadyDone, openMore) {
+    function row(r) {
       var val;
       if (r[2] === "tool") val = h("pre.c-tool", { text: Array.isArray(r[1]) ? r[1].join("\n") : r[1], tabindex: "0", lang: "en", dir: "ltr" });
       else val = h("div", { text: r[1] });
-      frag.appendChild(h("div.c-row" + (r[2] === "mistake" ? ".c-mistake" : ""), h("div.c-label", { text: r[0] }), val));
-    });
+      return h("div.c-row" + (r[2] === "mistake" ? ".c-mistake" : ""), h("div.c-label", { text: r[0] }), val);
+    }
+    var frag = document.createDocumentFragment();
+    [["① التشبيه", c.analogy], ["② المعنى العملي", c.meaning], ["③ كيف تراه في الأداة", c.inTool, "tool"]].forEach(function (r) { frag.appendChild(row(r)); });
+    var more = [["④ لماذا يهم المحقق", c.forInvestigator], ["⑤ مثال من القضية", c.fromCase], ["⑥ خطأ شائع", c.mistake, "mistake"]].filter(function (r) { return r[1]; });
+    if (more.length) {
+      var det = h("details.c-more", h("summary", { text: "اعرف أكثر: لماذا يهم المحقق، ومثال من القضية، وخطأ شائع" }));
+      if (openMore) det.setAttribute("open", "");
+      more.forEach(function (r) { det.appendChild(row(r)); });
+      frag.appendChild(det);
+    }
     if (withQuiz) {
       var q = h("div.c-row", h("div.c-label", { text: "⑦ سؤال فهم" }), h("div"));
       renderQuiz(q.lastChild, c.quiz, quizDone, alreadyDone);
@@ -96,7 +101,20 @@
     if (!root || !L) { if (root) root.textContent = "تعذّر تحميل محتوى الدرس."; return; }
     document.title = L.title + " — مختبر التحقيقات الرقمية الافتراضي";
 
-    var concepts = (L.explain && L.explain.cards) || [];
+    /* essential cards first (explain.core), then the optional ones under «للاستزادة»; without explain.core all are essential */
+    var allCards = (L.explain && L.explain.cards) || [];
+    var coreIds = (L.explain && L.explain.core) || allCards.map(function (c) { return c.id; });
+    var concepts = allCards.filter(function (c) { return coreIds.indexOf(c.id) >= 0; })
+      .concat(allCards.filter(function (c) { return coreIds.indexOf(c.id) < 0; }));
+    var nCore = allCards.filter(function (c) { return coreIds.indexOf(c.id) >= 0; }).length;
+    /* honest time per stage, shown under each stage heading */
+    var coreHlCount = ((L.interpret && L.interpret.coreHighlights) || []).length || Math.min(5, ((L.interpret && L.interpret.highlights) || []).length);
+    var MIN = {
+      explain: Math.max(3, Math.round(nCore * 1.5 + (L.explain && L.explain.figure ? 2 : 0))),
+      practice: Math.round(((L.practice && L.practice.steps) || []).length * 1.5) + 2,
+      interpret: Math.round(coreHlCount * 0.5 + ((L.interpret && L.interpret.questions) || []).filter(function (q) { return !q.extra; }).length * 1.5) + 2
+    };
+    function timeNote(st) { return h("p.time-note", { text: "⏱ نحو " + MIN[st] + (MIN[st] <= 10 ? " دقائق" : " دقيقة") + " • يمكنك التوقف في أي وقت والعودة لاحقاً: تقدّمك محفوظ في هذا المتصفح." }); }
     var conceptById = {}; concepts.forEach(function (c) { conceptById[c.id] = c; });
     var phase = null, mode = "guided", stepper = null, stage = null, watchCancel = null;
     var panels = {}, tabs = {};
@@ -169,8 +187,10 @@
     build.explain = function () {
       var p = panels.explain;
       p.appendChild(h("h2#h-explain", { text: "قبل أن تبدأ: مفاهيم تحتاجها" }));
+      p.appendChild(timeNote("explain"));
       if (L.explain.intro) p.appendChild(h("p.lead", { text: L.explain.intro }));
-      p.appendChild(h("p.muted", { text: "افتح أي بطاقة بالترتيب الذي تريده؛ سؤال الفهم في آخر كل بطاقة اختياري ويُصحَّح فوراً." }));
+      p.appendChild(h("p.muted", { text: "في كل بطاقة ثلاثة أجزاء أساسية (التشبيه، والمعنى، وكيف تراه في الأداة)، وتحتها «اعرف أكثر» لمن يريد التفصيل. سؤال الفهم في آخر البطاقة اختياري ويُصحَّح فوراً." }));
+      if (nCore < concepts.length) p.appendChild(h("h3.cards-group", { text: "المفاهيم الأساسية (" + nCore + ")" }));
       var list = h("div.concept-list");
       p.appendChild(list);
       var cards = [];
@@ -181,41 +201,56 @@
       var next = h("div.phase-next", progressNote, startBtn);
 
       function updateGate() {
-        var allSeen = seenCount >= concepts.length;
-        progressNote.textContent = allSeen ? "" : "اطّلعت على " + seenCount + " من " + concepts.length + " بطاقة (يُفضّل قراءتها كلها قبل التطبيق).";
+        var allSeen = seenCount >= nCore; // the essential cards are enough; «للاستزادة» stays optional
+        progressNote.textContent = allSeen ? "" : "اطّلعت على " + seenCount + " من " + nCore + " بطاقات أساسية (يُفضّل قراءتها قبل التطبيق).";
         if (allSeen && !P.isDone(id, "explain")) { P.mark(id, "explain"); refreshNav(); }
         if (allSeen) whatBox.hidden = false;
       }
       function markSeen(rec, c) {
         if (rec.seen) return;
-        rec.seen = true; seenCount++; P.markCard(id, c.id);
+        rec.seen = true; if (rec.core) seenCount++; P.markCard(id, c.id);
         rec.card.classList.add("is-done");
         if (!rec.answered) rec.head.querySelector(".state").textContent = "✔ اطّلعت";
         updateGate();
       }
+      var extraList = null;
       concepts.forEach(function (c, i) {
+        var isCore = i < nCore;
+        if (!isCore && !extraList) {
+          /* optional detail cards: closed by default, clearly marked, never required */
+          // the essential list is the last thing in the panel so far; the optional group follows it
+          p.appendChild(h("div.cards-extra-head",
+            h("h3.cards-group", { text: "للاستزادة (" + (concepts.length - nCore) + " مفاهيم، اختيارية)" }),
+            h("p.muted", { text: "تشرح بالتفصيل قيماً تراها في الأداة. اقرأها الآن أو ارجع إليها متى احتجت؛ لا يتوقف عليها شيء." })));
+          extraList = h("div.concept-list.is-extra");
+          p.appendChild(extraList);
+        }
         var already = !!P.get(id).cards[c.id];
         var head = h("button.concept-head", { type: "button", "aria-expanded": "false", id: "ch-" + c.id },
           h("span.cnum", { text: String(i + 1) }), h("span", { text: c.ar }), h("span.cen", { text: c.en || "" }), h("span.state", { text: "" }));
         var body = h("div.concept-body", { role: "region", "aria-labelledby": "ch-" + c.id, hidden: "" });
-        var card = h("article.concept", head, body);
+        var card = h("article.concept" + (isCore ? "" : ".is-extra"), head, body);
         var built = false;
-        var rec = { card: card, head: head, body: body, seen: false, answered: false };
+        var rec = { card: card, head: head, body: body, seen: false, answered: false, core: isCore };
+        /* «next» walks the essential cards, then the diagram; inside «للاستزادة» it walks the optional ones */
+        var lastOfGroup = isCore ? i === nCore - 1 : i === concepts.length - 1;
         function ensure() {
           if (built) return; built = true;
           body.appendChild(cardRows(c, true, function (ok) {
             rec.answered = true; rec.head.querySelector(".state").textContent = "✔ أُجيب";
           }, false));
-          var nxt = i < concepts.length - 1
+          var nxt = !lastOfGroup
             ? h("button.btn.btn-primary", { type: "button", "data-next-card": "", text: "البطاقة التالية: " + concepts[i + 1].ar + " ←" })
             : h("button.btn.btn-primary", { type: "button", "data-next-card": "", text: L.explain.figure ? "إلى الرسم التفاعلي ↓" : "تابع إلى التطبيق ←" });
           nxt.addEventListener("click", function () {
             head.setAttribute("aria-expanded", "false"); body.hidden = true;
-            if (i < concepts.length - 1) { openCard(i + 1); cards[i + 1].head.scrollIntoView({ block: "start", behavior: FSIM.core.config.fast ? "auto" : "smooth" }); cards[i + 1].head.focus({ preventScroll: true }); }
+            if (!lastOfGroup) { openCard(i + 1); cards[i + 1].head.scrollIntoView({ block: "start", behavior: FSIM.core.config.fast ? "auto" : "smooth" }); cards[i + 1].head.focus({ preventScroll: true }); }
             else if (L.explain.figure) { figHost.scrollIntoView({ block: "start", behavior: FSIM.core.config.fast ? "auto" : "smooth" }); }
             else go("practice");
           });
-          body.appendChild(h("div.card-next", h("span.muted", { text: "بطاقة " + (i + 1) + " من " + concepts.length }), nxt));
+          var label = nCore === concepts.length ? "بطاقة " + (i + 1) + " من " + concepts.length
+            : isCore ? "بطاقة أساسية " + (i + 1) + " من " + nCore : "للاستزادة " + (i - nCore + 1) + " من " + (concepts.length - nCore);
+          body.appendChild(h("div.card-next", h("span.muted", { text: label }), nxt));
         }
         rec.ensure = ensure;
         head.addEventListener("click", function () {
@@ -223,11 +258,11 @@
           if (open) { head.setAttribute("aria-expanded", "false"); body.hidden = true; }
           else { ensure(); head.setAttribute("aria-expanded", "true"); body.hidden = false; markSeen(rec, c); }
         });
-        if (already) { rec.seen = true; seenCount++; card.classList.add("is-done"); head.querySelector(".state").textContent = "✔ اطّلعت"; }
-        cards.push(rec); list.appendChild(card);
+        if (already) { rec.seen = true; if (isCore) seenCount++; card.classList.add("is-done"); head.querySelector(".state").textContent = "✔ اطّلعت"; }
+        cards.push(rec); (isCore ? list : extraList).appendChild(card);
       });
       function openCard(i) { var r = cards[i]; r.ensure(); r.head.setAttribute("aria-expanded", "true"); r.body.hidden = false; markSeen(r, concepts[i]); }
-      var firstUnseen = cards.findIndex(function (r) { return !r.seen; });
+      var firstUnseen = cards.findIndex(function (r) { return r.core && !r.seen; });
       if (concepts.length) openCard(firstUnseen < 0 ? 0 : firstUnseen);
 
       /* interactive diagram */
@@ -243,7 +278,7 @@
     };
 
     /* ================= PRACTICE ================= */
-    var launchers = {};
+    var launchers = {}, offerBox = null;
     function teardownPractice() {
       if (watchCancel) { watchCancel(); watchCancel = null; }
       if (stepper) { stepper.destroy(); stepper = null; }
@@ -253,7 +288,16 @@
     build.practice = function () {
       var pr = L.practice, p = panels.practice;
       p.appendChild(h("h2#h-practice", { text: "التطبيق" }));
+      p.appendChild(timeNote("practice"));
       p.appendChild(h("div.practice-scenario", h("strong", { text: "السيناريو: " }), document.createTextNode(pr.scenario)));
+      /* self-learners: watch the lecturer-style demo first, then try (the «watch» mode, offered up front) */
+      var watchFirst = h("button.btn.btn-primary#watch-first", { type: "button", text: "▶ شاهد العرض أولاً" });
+      offerBox = h("div.watch-offer", h("p", h("strong", { text: "أول مرة ترى هذا البرنامج؟ " }),
+        "شاهد العرض التلقائي (نحو دقيقة): ينفّذ الخطوات أمامك واحدة واحدة مع شرحها، ثم جرّب بنفسك بالتوجيه."), watchFirst);
+      watchFirst.addEventListener("click", function () {
+        modes.querySelector('[data-mode="watch"]').click();
+        var play = document.getElementById("watch-play"); if (play) play.click();
+      });
       var modes = h("div.modes", { role: "group", "aria-label": "وضع التطبيق" }, h("span.label", { text: "الوضع:" }));
       [["guided", "جرّب بتوجيه"], ["watch", "شاهد"], ["free", "جرّب حراً"]].forEach(function (m) {
         var b = h("button.mode-btn", { type: "button", "data-mode": m[0], "aria-pressed": m[0] === mode ? "true" : "false", text: m[1] });
@@ -267,6 +311,7 @@
       var freeBtn = modes.querySelector('[data-mode="free"]');
       freeBtn.setAttribute("aria-disabled", "false");
       p.appendChild(modes);
+      p.appendChild(offerBox);
       p.appendChild(h("div.note.mobile-hint", { text: "للتطبيق الأفضل استخدم حاسوباً: البرامج الحقيقية برامج حاسوب، ونافذة المحاكاة تُمرَّر أفقياً على الشاشات الصغيرة." }));
       p.appendChild(h("div.practice-grid", h("aside.steps-panel#steps-panel", { "aria-label": "لوحة الخطوات" }), h("div.stage-wrap", h("div.stage-bar#stage-bar"), h("div.stage#stage"))));
       p.appendChild(h("div.phase-next", h("button.btn.btn-primary#to-interpret", { type: "button", hidden: "", text: "تابع إلى التفسير ←" })));
@@ -281,6 +326,7 @@
       stepsPanel.textContent = ""; bar.textContent = ""; stEl.textContent = ""; launchers = {};
       FSIM.core.sim.state = pr.state || "healthy";
       refreshModeButtons();
+      if (offerBox) offerBox.hidden = !(mode === "guided" && !P.isDone(id, "practice"));
       stage = FSIM.core.windows.Stage(stEl);
 
       /* launchers + state switch */
@@ -357,12 +403,14 @@
             goI.addEventListener("click", function () { setFocus(false); go("interpret"); });
             host.appendChild(h("div.completion", { role: "status" }, h("strong", { text: "أحسنت! " }), document.createTextNode("أكملت التطبيق. الخطوة التالية: تفسير ما رأيت. "), goI));
           } else if (mode === "watch") {
-            host.appendChild(h("div.note.note-info", { text: "انتهى العرض. جرّب بنفسك في الوضع الموجَّه." }));
+            var tryNow = h("button.btn.btn-primary#try-now", { type: "button", text: "جرّب بنفسك الآن ←" });
+            tryNow.addEventListener("click", function () { var g = document.querySelector('#panel-practice [data-mode="guided"]'); if (g) g.click(); });
+            host.appendChild(h("div.note.note-info", h("p", { text: "انتهى العرض. الآن دورك: نفّذ الخطوات نفسها بيدك، والتلميحات متاحة متى احتجت." }), tryNow));
           }
         }
       });
       if (mode === "watch") {
-        var play = h("button.btn.btn-primary", { type: "button", text: "▶ ابدأ العرض التلقائي" });
+        var play = h("button.btn.btn-primary#watch-play", { type: "button", text: "▶ ابدأ العرض التلقائي" });
         stepsPanel.appendChild(h("div.hint-row", play));
         var running = false;
         play.addEventListener("click", function () {
@@ -410,15 +458,34 @@
     build.interpret = function () {
       var I = L.interpret, p = panels.interpret;
       p.appendChild(h("h2#h-interpret", { text: "التفسير: ماذا يعني الناتج؟" }));
-      p.appendChild(h("p", { text: "اضغط على أي قيمة مظلّلة بالأصفر لتظهر بطاقة معناها. مؤشرات الخطر الحقيقية تُظلَّل باللون الوردي." }));
+      p.appendChild(timeNote("interpret"));
+      p.appendChild(h("p", { text: "اضغط على أي قيمة مظلّلة لتظهر بطاقة معناها. ابدأ بالقيم الأساسية (عليها ★): هي ما تحتاجه للإجابة عن الأسئلة. القيم الأخرى المظلّلة تشرح التفاصيل لمن يريد. مؤشرات الخطر الحقيقية تُظلَّل باللون الوردي." }));
 
-      /* annotated outputs */
+      /* annotated outputs; the discovery counter follows the essential values (interpret.coreHighlights) */
       var tools = h("div.annot-tools", { role: "group", "aria-label": "اختر الناتج" });
       var paneHost = h("div");
       var meaning = h("div.meaning-card", { "aria-live": "polite", hidden: "" });
-      var found = {}, totalHl = (I.highlights || []).length;
-      var counter = h("p.annot-count", { "aria-live": "polite", text: "اكتشفت 0 من " + totalHl + " قيمة مظلّلة" });
-      p.appendChild(tools); p.appendChild(counter); p.appendChild(paneHost); p.appendChild(meaning);
+      var coreLabels = I.coreHighlights || (I.highlights || []).map(function (x) { return x.label; });
+      function isCoreHl(hl) { return coreLabels.indexOf(hl.label) >= 0; }
+      var coreHls = (I.highlights || []).filter(isCoreHl);
+      var found = {}, totalHl = coreHls.length;
+      var counter = h("p.annot-count", { "aria-live": "polite", text: "اكتشفت 0 من " + totalHl + " قيم أساسية" });
+      /* the essential values as a checklist: a click opens the right output and the value itself */
+      var coreList = h("ul.core-list", { "aria-label": "القيم الأساسية في هذا الدرس" });
+      var coreItems = {};
+      coreHls.forEach(function (hl) {
+        var src = (I.sources || []).filter(function (s) { return s.id === hl.src; })[0];
+        var b = h("button", { type: "button", "data-core": hl.label, text: "★ " + hl.label + (src ? " (" + src.title + ")" : "") });
+        b.addEventListener("click", function () {
+          var sb = Array.prototype.filter.call(tools.children, function (x) { return x.getAttribute("data-src") === hl.src; })[0];
+          if (sb && activeSrc !== hl.src) sb.click();
+          var spot = Array.prototype.filter.call(paneHost.querySelectorAll(".annot.is-core"), function (x) { return x.getAttribute("data-label") === hl.label; })[0];
+          if (spot) { spot.scrollIntoView({ block: "center", behavior: FSIM.core.config.fast ? "auto" : "smooth" }); spot.click(); spot.focus({ preventScroll: true }); }
+        });
+        coreItems[hl.label] = b;
+        coreList.appendChild(h("li", b));
+      });
+      p.appendChild(tools); p.appendChild(counter); if (coreHls.length) p.appendChild(coreList); p.appendChild(paneHost); p.appendChild(meaning);
       var activeSrc = null;
 
       function showMeaning(hl, btn) {
@@ -427,18 +494,22 @@
         meaning.hidden = false; meaning.classList.toggle("is-danger", !!hl.danger); meaning.textContent = "";
         meaning.appendChild(h("p", h("strong", { text: (hl.danger ? "⚠ مؤشر خطر: " : "") + hl.label + " " }), h("span.val", { text: hl.value || "" })));
         meaning.appendChild(h("p", { text: hl.meaning }));
-        found[hl.src + "|" + hl.label] = true;
-        var nf = Object.keys(found).length;
-        counter.textContent = "اكتشفت " + nf + " من " + totalHl + " قيمة مظلّلة" + (nf >= totalHl ? " ✔ ممتاز، انتقل إلى الأسئلة بالأسفل." : "");
+        if (isCoreHl(hl)) {
+          found[hl.label] = true;
+          if (coreItems[hl.label]) coreItems[hl.label].classList.add("is-found");
+          var nf = Object.keys(found).length;
+          counter.textContent = "اكتشفت " + nf + " من " + totalHl + " قيم أساسية" + (nf >= totalHl ? " ✔ ممتاز: فهمت القيم الأساسية. انتقل إلى الأسئلة بالأسفل، والقيم الأخرى المظلّلة للاستزادة." : "");
+        }
         setTimeout(function () { meaning.scrollIntoView({ block: "nearest", behavior: FSIM.core.config.fast ? "auto" : "smooth" }); }, 0);
         if (hl.concept && conceptById[hl.concept]) {
           var rb = h("button.recall-link", { type: "button", text: "تذكير بالمفهوم: " + conceptById[hl.concept].ar });
-          rb.addEventListener("click", function () { dialog(conceptById[hl.concept].ar + " — " + (conceptById[hl.concept].en || ""), (function () { var d = h("div"); d.appendChild(cardRows(conceptById[hl.concept], false)); return d; })(), rb); });
+          rb.addEventListener("click", function () { dialog(conceptById[hl.concept].ar + " — " + (conceptById[hl.concept].en || ""), (function () { var d = h("div"); d.appendChild(cardRows(conceptById[hl.concept], false, null, false, true)); return d; })(), rb); });
           meaning.appendChild(rb);
         }
       }
       function annot(hl, text) {
-        var b = h("button.annot" + (hl.danger ? ".is-danger" : ""), { type: "button", text: text, "aria-label": hl.label + ": " + text });
+        var core = isCoreHl(hl);
+        var b = h("button.annot" + (hl.danger ? ".is-danger" : "") + (core ? ".is-core" : ".is-extra"), { type: "button", text: text, "data-label": hl.label, "aria-label": (core ? "قيمة أساسية — " : "") + hl.label + ": " + text });
         b.addEventListener("click", function () { showMeaning(Object.assign({ value: text }, hl), b); });
         return b;
       }
@@ -513,7 +584,7 @@
         paneHost.appendChild(src.kind === "autoruns" ? renderAutoruns(src) : src.kind === "table" ? renderTable(src) : renderTerminal(src));
       }
       (I.sources || []).forEach(function (src, i) {
-        var b = h("button", { type: "button", "aria-pressed": "false", text: src.title });
+        var b = h("button", { type: "button", "aria-pressed": "false", "data-src": src.id, text: src.title });
         b.addEventListener("click", function () { showSource(src, b); });
         tools.appendChild(b);
         if (i === 0) showSource(src, b);
@@ -530,16 +601,19 @@
       }
 
       /* Lab Manual questions */
-      var pending = I.questions.length, qs = h("div");
+      /* the Lab Manual questions complete the lesson; the «إضافي» ones deepen it and stay optional */
+      var nReq = I.questions.filter(function (q) { return !q.extra; }).length;
+      var pending = nReq, qs = h("div");
       p.appendChild(h("h3", { text: "أسئلة Lab Manual" }));
+      p.appendChild(h("p.muted", { text: "الأسئلة الأساسية (" + nReq + ") تُنهي الدرس. الأسئلة المعلَّمة «إضافي» اختيارية تعمّق فهمك، ويُنصح بها قبل الامتحان." }));
       p.appendChild(qs);
       function gate() { if (pending <= 0) completeLesson(); }
       I.questions.forEach(function (q, i) {
         var already = !!P.get(id).questions[i];
-        var box = h("div.lab-q", h("p", h("span.q-num", { text: "سؤال " + (i + 1) + (q.extra ? " (إضافي)" : "") + ": " })));
+        var box = h("div.lab-q" + (q.extra ? ".is-extra" : ""), h("p", h("span.q-num", { text: "سؤال " + (i + 1) + (q.extra ? " (إضافي)" : "") + ": " })));
         qs.appendChild(box);
-        if (already) pending--;
-        renderQuiz(box, q, function () { if (!P.get(id).questions[i]) { P.markQuestion(id, i); pending--; } gate(); }, already);
+        if (already && !q.extra) pending--;
+        renderQuiz(box, q, function () { if (!P.get(id).questions[i]) { P.markQuestion(id, i); if (!q.extra) pending--; } gate(); }, already);
       });
 
       /* completion + real world */
@@ -566,10 +640,17 @@
         done.appendChild(h("div.completion", h("h3", { text: "🎉 أنهيت الدرس" }),
           CB ? h("div.case-found", h("p", h("strong", { text: "اكتشاف جديد أُضيف إلى لوحة التحقيق:" })), h("p", { text: CB.finding }),
             h("a", { href: "../case.html", text: "افتح لوحة التحقيق" })) : null,
-          h("p", { text: "أجبت عن كل الأسئلة. يمكنك الآن إنشاء رمز إنجاز يتحقق منه الأستاذ." }),
+          h("p", { text: "أجبت عن الأسئلة الأساسية. يمكنك الآن إنشاء رمز إنجاز يتحقق منه الأستاذ." }),
           h("div.field", h("label", { "for": "student-id", text: "رقمك الجامعي" }), inp, h("small.muted#sid-help", { text: "يُستخدم محلياً داخل المتصفح لتوليد الرمز ولا يُرسل إلى أي جهة." })),
           gen, out, pos.next ? h("p", h("a.btn.btn-primary", { href: pos.next.id + ".html", text: "الدرس التالي: " + pos.next.title + " ←" })) : null));
         if (inp.value.trim()) show();
+      }
+
+      /* «what to remember»: three lines a self-learning student can come back to before the exam */
+      if (L.summary && L.summary.length) {
+        p.appendChild(h("section.lesson-summary", { "aria-labelledby": "sum-h" },
+          h("h3#sum-h", { text: "📌 ما يجب أن تتذكره من هذا الدرس" }),
+          h("ol", L.summary.map(function (s) { return h("li", { text: s }); }))));
       }
 
       /* conclusion */

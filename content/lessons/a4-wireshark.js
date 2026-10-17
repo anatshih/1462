@@ -9,6 +9,11 @@ window.FSIM.lessons["a4-wireshark"] = {
     seeking: "نلتقط الحزم على شبكة الجهاز لنرى الاتصال من الخارج: بأي اسم سأل الجهاز عن الخادم، وكيف وصل إليه.",
     finding: "الالتقاط على Wi-Fi يُظهر 14 طلب DNS منها 3 إلى update-sync.example، والرد 203.0.113.45 تلاه اتصال TCP من 192.168.1.23:49822 إلى المنفذ 4444."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "Wireshark يلتقط الحزم المارة في الواجهة؛ وفلتر العرض يُظهر ما تريد دون أن يحذف الباقي.",
+    "الفلتر dns يُظهر 28 حزمة (طلبات وردود معاً)، أما dns.flags.response == 0 فيعدّ الطلبات وحدها: 14 طلباً.",
+    "سأل الجهاز 3 مرات عن update-sync.example فأجابه DNS بالعنوان 203.0.113.45، ثم بدأ اتصالاً (SYN) بالمنفذ 4444."
+  ],
   objectives: [
     "التقاط حركة واجهة Wi-Fi وإيقافها وقراءة قائمة الحزم.",
     "كتابة فلاتر العرض (dns، dns.flags.response == 0، ip.addr، tcp.port) وعدّ النتائج بدقة.",
@@ -93,6 +98,7 @@ window.FSIM.lessons["a4-wireshark"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["طلب update-sync.example","رد update-sync.example","SYN إلى 4444","الوجهة 203.0.113.45"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "dns", kind: "table", tool: "wireshark", title: "قائمة dns", heading: "Wireshark › filter: dns  (28 من 43 حزمة)", filter: "dns" },
       { id: "c2", kind: "table", tool: "wireshark", title: "ip.addr == 203.0.113.45", heading: "Wireshark › filter: ip.addr == 203.0.113.45", filter: "ip.addr == 203.0.113.45" },

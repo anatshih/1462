@@ -10,13 +10,19 @@ window.FSIM.lessons["a1-network"] = {
     seeking: "نبدأ بالأساس: عنوان الجهاز في الشبكة وهل يتصل بالإنترنت، فكل اتصال مشبوه سنراه لاحقاً يُقرأ بالنسبة إلى هذا العنوان.",
     finding: "جهاز ACC-PC07 عنوانه 192.168.1.23 (MAC 3C-52-82-4A-91-0C) ضمن الشبكة 192.168.1.0/24، ومتصل بالإنترنت عبر 192.168.1.1."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "ipconfig يعطيك عنوان الجهاز (IPv4 Address) وبوابته (Default Gateway): جهاز سامي 192.168.1.23 وبوابته 192.168.1.1.",
+    "ping يختبر الاتصال: بالرقم (ping 8.8.8.8) يختبر الوصول إلى الإنترنت، وبالاسم (ping google.com) يختبر DNS أيضاً؛ و0% loss تعني اتصالاً سليماً.",
+    "tracert يرسم الطريق قفزة قفزة حتى الوجهة؛ والنجوم * * * في قفزة لا تعني انقطاعاً ما دام المسار اكتمل (8 قفزات)."
+  ],
   objectives: [
     "معرفة عنوان الجهاز ونطاق شبكته وبوابته بأمر ipconfig.",
     "التأكد من الاتصال وتفسير نتائج ping وtracert.",
     "التمييز بين انقطاع الإنترنت وعطل DNS وفشل DHCP."
   ],
   explain: {
-    intro: "التشبيه الجامع لهذا الدرس: الشبكة المحلية عمارة، والأجهزة شقق، والراوتر بوابة العمارة، والإنترنت المدينة. افتح كل بطاقة بالترتيب وأجب عن سؤالها قبل الانتقال إلى التالية.",
+    core: ["ipv4","gateway","dns","ping","tracert"],   // essential cards shown first; the others under «للاستزادة»
+    intro: "التشبيه الجامع لهذا الدرس: الشبكة المحلية عمارة، والأجهزة شقق، والراوتر بوابة العمارة، والإنترنت المدينة. ابدأ بالبطاقات الأساسية الخمس بالترتيب؛ والبقية للاستزادة.",
     figure: "building",
     whatNext: "ستكتب في Command Prompt الأمر ipconfig ثم ipconfig /all، ثم تفحص ثلاث وجهات بأمر ping، وتتبّع المسار بـ tracert، وتقارن مع واجهة Kali، ثم تجرّب كيف يبدو عطل DNS.",
     cards: [
@@ -166,6 +172,7 @@ window.FSIM.lessons["a1-network"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["IPv4 Address","Default Gateway","Reply from 8.8.8.8","Lost = 0 (0% loss)","Trace complete."],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "ipconfig", title: "ipconfig", tool: "cmd", cmd: "ipconfig", state: "healthy" },
       { id: "ipconfig-all", title: "ipconfig /all", tool: "cmd", cmd: "ipconfig /all", state: "healthy" },

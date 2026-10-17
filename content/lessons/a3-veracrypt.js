@@ -9,6 +9,11 @@ window.FSIM.lessons["a3-veracrypt"] = {
     seeking: "نحفظ نتائج التحقيق في حاوية مشفّرة لا تُفتح إلا بكلمة المرور الصحيحة.",
     finding: "أُنشئت حاوية Evidence.hc (250 MB، AES، SHA-512) وظهرت M: بعد Mount بكلمة المرور الصحيحة، ورُفضت الكلمة الخاطئة برسالة Incorrect password."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "الحاوية المشفّرة ملف عادي يُفتح كقرص (M:) بكلمة المرور الصحيحة فقط.",
+    "أنشأنا الحاوية Evidence.hc (250 MB، خوارزمية AES)، وعند Mount بكلمة خاطئة رُفضت برسالة Incorrect password.",
+    "اعمل Unmount بعد الانتهاء: القرص المفتوح مكشوف لكل من يستخدم الجهاز."
+  ],
   objectives: [
     "إنشاء حاوية مشفرة (Evidence.hc) بخطوات VeraCrypt الحقيقية.",
     "ربط الحاوية بحرف قرص (Mount) وفكّها (Unmount)، وملاحظة رفض كلمة المرور الخاطئة.",
@@ -88,6 +93,7 @@ window.FSIM.lessons["a3-veracrypt"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["successfully created","M:","رسالة الرفض"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "created", tool: "veracrypt", cmd: "created", title: "رسالة الإنشاء", heading: "VeraCrypt — Volume Creation Wizard" },
       { id: "list", tool: "veracrypt", cmd: "list", title: "قائمة الأقراص بعد Mount", heading: "VeraCrypt — main window (after Mount)" },

@@ -10,13 +10,18 @@ window.FSIM.lessons["a1-autoruns"] = {
     seeking: "إن كان الجهاز «يعمل وحده» فلعل برنامجاً يبدأ تلقائياً مع كل تسجيل دخول. نبحث عنه في أماكن التشغيل التلقائي.",
     finding: "مدخل WindowsUpdateHelper في HKCU\\…\\Run يشير إلى C:\\Users\\sami\\AppData\\Roaming\\WinUpdate\\update.exe، بلا ناشر موثّق، وأُضيف في 3/10/2026 10:17:41 م."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "Autoruns يجمع كل أماكن التشغيل التلقائي في نافذة واحدة، وتبويب Logon يعرض مفاتيح Run التي تعمل مع كل تسجيل دخول.",
+    "المدخل المشبوه: WindowsUpdateHelper في HKCU\\…\\Run يشغّل update.exe من مجلد AppData، بلا ناشر موثّق، وأُضيف في 10/3/2026 10:17:41 PM.",
+    "الصف الوردي = لا توقيع موثّق، والأصفر = الملف غير موجود؛ اللون إشارة تستحق الفحص، لا حكماً نهائياً بالاختراق."
+  ],
   objectives: [
     "فهم معنى التشغيل التلقائي (Persistence) ولماذا يهم المحقق.",
     "قراءة نافذة Autoruns وتمييز الصف الوردي والأصفر.",
     "الوصول إلى المدخل المشبوه وتوثيق مساره ووقت إضافته دون تغيير الدليل."
   ],
   explain: {
-    intro: "التشبيه الجامع للدروس القادمة: الحاسوب مصنع؛ البرامج المثبّتة عمّال مسجّلون، والعمليات الجارية عمّال على رأس العمل، والمنافذ أبواب شحن، والسجل دفتر قواعد المصنع. افتح كل بطاقة بالترتيب وأجب عن سؤالها.",
+    intro: "التشبيه الجامع للدروس القادمة: الحاسوب مصنع؛ البرامج المثبّتة عمّال مسجّلون، والعمليات الجارية عمّال على رأس العمل، والمنافذ أبواب شحن، والسجل دفتر قواعد المصنع. افتح البطاقات بالترتيب.",
     figure: "factory",
     whatNext: "ستفتح مجلد Sysinternals وتشغّل Autoruns، وتنظر في تبويب Logon على جهاز سليم أولاً، ثم تبدّل إلى الجهاز المصاب لتجد المدخل المشبوه، وتخفي مدخلات Microsoft لتركّز على الباقي، وتتعرف على الصف الأصفر.",
     cards: [
@@ -103,6 +108,7 @@ window.FSIM.lessons["a1-autoruns"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["صف وردي: WindowsUpdateHelper","Publisher","Image Path","Timestamp"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "logon-infected", kind: "autoruns", title: "Logon — جهاز مصاب", tab: "Logon", state: "infected" },
       { id: "tasks", kind: "autoruns", title: "Scheduled Tasks", tab: "Scheduled Tasks", state: "infected" },

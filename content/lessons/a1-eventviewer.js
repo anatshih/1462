@@ -9,12 +9,18 @@ window.FSIM.lessons["a1-eventviewer"] = {
     seeking: "من زرعه؟ نبحث في سجل الأحداث عمّا سبق زرع البرنامج: محاولات الدخول إلى حساب sami.",
     finding: "سجل Security يُظهر 6 محاولات دخول فاشلة (4625) إلى حساب sami عبر الشبكة من 192.168.1.50 (LAB-KALI) بين 10:10 و10:14 م يوم 3/10/2026، تلاها دخول ناجح (4624، النوع 3) في 10:15:02 م."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "سجل Security يحفظ محاولات الدخول: الحدث 4625 = دخول فاشل، و4624 = دخول ناجح؛ ونعزلها بـ Filter Current Log.",
+    "6 محاولات فاشلة من 192.168.1.50 (LAB-KALI) بين 10:10 و10:14 م، تلاها دخول ناجح في 10:15:02 م من النوع 3 (عبر الشبكة): هذا تخمين لكلمة المرور.",
+    "آخر دخول في السجل هو دخول سامي صباحاً (النوع 2، أمام الجهاز)؛ نوع الدخول ومصدره هما ما يفرّق بين المستخدم والمهاجم."
+  ],
   objectives: [
     "الوصول إلى سجل Security وفلترته برقم الحدث (4625 و4624).",
     "قراءة تفاصيل الحدث: نوع الدخول وسبب الفشل ومصدر المحاولة.",
     "التمييز بين دخول صاحب الجهاز ودخول المهاجم، وبناء خط زمني."
   ],
   explain: {
+    core: ["event-log","event-id","audit","logon-type","brute-force"],   // essential cards shown first; the others under «للاستزادة»
     intro: "التشبيه الجامع: سجل الأحداث دفتر الحارس عند البوابة: يكتب من دخل ومتى ومن أين ومن فشل. ثمانية مفاهيم بالترتيب.",
     figure: "guard",
     whatNext: "ستفتح Event Viewer، وتنتقل إلى Windows Logs › Security، وتفلتر 4625 فتعدّ المحاولات الفاشلة، ثم 4624 لتجد الدخول الناجح الذي جاء بعدها، ثم تجمع الاثنين معاً.",
@@ -131,6 +137,7 @@ window.FSIM.lessons["a1-eventviewer"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["Audit Failure / 4625 × 6","10/3/2026 10:15:02 PM","Failure Reason","Logon Type 3"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "list", kind: "table", tool: "eventviewer", title: "قائمة Security", heading: "Security   Number of events: 13", ids: "" },
       { id: "fail", tool: "eventviewer", cmd: "fail", title: "حدث 4625 (General)", heading: "Event 4625, Microsoft Windows security auditing." },

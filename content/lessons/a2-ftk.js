@@ -9,12 +9,18 @@ window.FSIM.lessons["a2-ftk"] = {
     seeking: "قبل أي تحليل أعمق نأخذ نسخة جنائية من القرص، ونثبت ببصمتها أنها لم تتغير.",
     finding: "نُسخ القرص C: لجهاز ACC-PC07 بصيغة E01 (MD5 5f3a9c1e…4a26)، وتطابق Computed hash وReport Hash."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "النسخة الجنائية نسخة كاملة بت ببت لا تغيّر الأصل؛ اخترنا Logical Drive (القسم C:) وصيغة E01 ودوّنا بيانات الدليل.",
+    "FTK Imager يحسب البصمة (Hash) أثناء النسخ ثم يتحقق منها: تطابق Computed hash مع Report Hash (MD5 يبدأ بـ 5f3a9c1e) يعني أن النسخة سليمة.",
+    "أي اختلاف في البصمة يعني أن النسخة تغيّرت، فلا يُعتمد عليها دليلاً."
+  ],
   objectives: [
     "إنشاء نسخة جنائية (E01) من قسم C: بخطوات FTK Imager الحقيقية.",
     "تدوين بيانات الدليل (رقم القضية والفاحص) لحفظ سلسلة الحيازة.",
     "قراءة نتيجة التحقق: Computed hash وReport Hash وVerify result."
   ],
   explain: {
+    core: ["forensic-image","drive-types","image-formats","hash"],   // essential cards shown first; the others under «للاستزادة»
     intro: "التشبيه الجامع: المحقق لا يعمل على الوثيقة الأصلية أبداً؛ يصوّرها نسخة مطابقة مختومة ويعمل على النسخة. اقرأ البطاقات بأي ترتيب تشاء.",
     figure: "camera",
     whatNext: "ستنشئ نسخة جنائية بصيغة E01 من قسم C: لجهاز ACC-PC07: تختار المصدر والقسم والصيغة، وتدوّن بيانات الدليل، وتحدد اسم الملف، وتبدأ النسخ مع التحقق، ثم تقرأ قيم Hash.",
@@ -114,6 +120,7 @@ window.FSIM.lessons["a2-ftk"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["MD5 Computed hash","MD5 Report Hash","Verify result"],   // essential values (labels) counted by the discovery counter
     sources: [{ id: "verify", tool: "ftk", cmd: "verify", title: "نتائج التحقق", heading: "Drive/Image Verify Results" }],
     highlights: [
       { src: "verify", line: "Name  ", match: "ACC-PC07_C.E01", label: "Name", concept: "image-formats", meaning: "اسم النسخة وصيغتها E01؛ نفس الاسم سيظهر في EnCase عند إضافة الدليل." },

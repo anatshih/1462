@@ -9,6 +9,11 @@ window.FSIM.lessons["a3-diskdigger"] = {
     seeking: "نفحص نسخة القرص بحثاً عن الأرشيف المحذوف، ونعرف أين يظهر ولماذا.",
     finding: "استُرجع arc_1003.zip (محذوف) من Found in file system بمساره الأصلي، وحُفظ على قرص آخر؛ كما ظهر 0001.jpg منحوتاً في Found in free space."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "حذف الملف يزيل الإشارة إليه في نظام الملفات لا محتواه، فيبقى قابلاً للاستعادة حتى يُكتب فوقه.",
+    "arc_1003.zip ظهر في تبويب Found in file system باسمه ومساره الأصلي؛ أما 0001.jpg فظهر في Found in free space بالنحت، بلا اسمه الأصلي.",
+    "احفظ الملف المستعاد على قرص آخر، حتى لا تكتب فوق بيانات لم تُستعد بعد."
+  ],
   objectives: [
     "فهم كيف يُحذف الملف فعلاً ولماذا يمكن استعادته غالباً.",
     "تمييز نتائج Found in file system عن Found in free space.",
@@ -88,6 +93,7 @@ window.FSIM.lessons["a3-diskdigger"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["arc_1003.zip","Directory","0001.jpg"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "fs", kind: "table", tool: "diskdigger", title: "Found in file system", heading: "DiskDigger › Found in file system", tab: "Found in file system" },
       { id: "free", kind: "table", tool: "diskdigger", title: "Found in free space", heading: "DiskDigger › Found in free space", tab: "Found in free space" }

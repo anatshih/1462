@@ -10,6 +10,11 @@ window.FSIM.lessons["a1-tcpview"] = {
     seeking: "هل يتصل هذا البرنامج بالخارج؟ نفحص اتصالات الشبكة ونربط كل اتصال بالعملية التي فتحته.",
     finding: "برنامج update.exe (PID 6120) له اتصال Established بالعنوان 203.0.113.45 على المنفذ 4444، وتؤكده أداتا TCPView وnetstat."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "TCPView وnetstat -ano يعرضان كل اتصال شبكي مع العملية التي فتحته ورقمها (PID).",
+    "update.exe (PID 6120) له اتصال Established بالعنوان الخارجي 203.0.113.45 على المنفذ 4444، ويستمع (Listen) على المنفذ 4444 أيضاً.",
+    "الأمر tasklist /FI \"PID eq 6120\" يحوّل رقم العملية إلى اسم البرنامج؛ وحين تعطي أداتان مختلفتان النتيجة نفسها يقوى الدليل."
+  ],
   objectives: [
     "قراءة جدول الاتصالات: العنوان المحلي والبعيد والمنفذ والحالة.",
     "تمييز الاتصال المشبوه (برنامج مجهول ← عنوان خارجي ← منفذ غير قياسي).",
@@ -81,6 +86,7 @@ window.FSIM.lessons["a1-tcpview"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["update.exe","Remote Address","Remote Port 4444","PID 6120"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "tv", kind: "table", tool: "tcpview", title: "TCPView — جهاز مصاب", heading: "TCPView — TCP v4 + UDP v4", state: "infected" },
       { id: "netstat", title: "netstat -ano", tool: "cmd", cmd: "netstat -ano", state: "infected" },

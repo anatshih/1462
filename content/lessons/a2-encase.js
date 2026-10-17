@@ -9,6 +9,11 @@ window.FSIM.lessons["a2-encase"] = {
     seeking: "نفتح النسخة في قضية، ونبحث فيها عن ملفات محذوفة أو متنكّرة بامتداد غير حقيقي.",
     finding: "في النسخة ACC-PC07_C.E01 ملف محذوف arc_1003.zip وملف holiday.jpg توقيعه ZIP (PK) لا JPEG."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "سير العمل في EnCase: إنشاء قضية، ثم إضافة الدليل (ملف E01)، ثم التصفح بالأجزاء الثلاثة Tree ثم Table ثم View.",
+    "في مجلد Temp ملف محذوف arc_1003.zip (Is Deleted = Yes) ما زال محتواه موجوداً في النسخة.",
+    "holiday.jpg امتداده صورة لكن توقيعه 50 4B (PK) أي ملف ZIP متنكّر؛ التوقيع لا الامتداد هو ما يحدد نوع الملف."
+  ],
   objectives: [
     "إنشاء قضية وإضافة النسخة الجنائية (E01) مع التحقق من Hash.",
     "التنقل بين Tree وTable وView وقراءة أعمدة مثل Is Deleted وSignature Analysis.",
@@ -99,6 +104,7 @@ window.FSIM.lessons["a2-encase"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["Is Deleted = Yes","Bad signature","50 4B (PK)"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "table", kind: "table", tool: "encase", title: "جدول الملفات", heading: "EnCase › Table pane (كل الملفات)", state: "healthy" },
       { id: "hex", tool: "encase", cmd: "holiday.jpg", title: "Hex: holiday.jpg", heading: "View › Hex — holiday.jpg" }

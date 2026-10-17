@@ -10,6 +10,11 @@ window.FSIM.lessons["a4-nmap"] = {
     seeking: "نفحص جهاز سامي من جهاز المحقق (بتفويض) لنعرف ما يستمع عليه من منافذ، ونطابقها مع ما رأيناه في TCPView.",
     finding: "nmap على 192.168.1.23 يُظهر 3 منافذ مفتوحة (135 و445 و4444)؛ المنفذ 4444 غير قياسي وتملكه العملية update.exe (PID 6120) حسب TCPView."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "nmap يكشف المنافذ المفتوحة على جهاز؛ والفحص nmap 127.0.0.1 يفحص جهازك أنت (منفذ مفتوح واحد: 22).",
+    "جهاز سامي 192.168.1.23 عليه 3 منافذ مفتوحة: 135 و445 و4444؛ والمنفذ 4444 غير قياسي وتملكه العملية update.exe (حسب TCPView).",
+    "لا تفحص أي جهاز إلا بتفويض مكتوب، ولا تثق باسم الخدمة الذي يخمّنه nmap من رقم المنفذ."
+  ],
   objectives: [
     "فهم أن nmap 127.0.0.1 يفحص الجهاز الذي تكتب عليه، وبماذا يختلف عن فحص جهاز الضحية.",
     "قراءة حالات المنافذ (open / closed / filtered) وعدّ المنافذ المفتوحة.",
@@ -74,6 +79,7 @@ window.FSIM.lessons["a4-nmap"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["22/tcp open","135/tcp","445/tcp","4444/tcp"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "local", tool: "kali", cmd: "nmap 127.0.0.1", title: "nmap 127.0.0.1" },
       { id: "victim", tool: "kali", cmd: "nmap 192.168.1.23", title: "nmap 192.168.1.23" },

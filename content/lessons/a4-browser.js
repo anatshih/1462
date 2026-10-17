@@ -9,6 +9,11 @@ window.FSIM.lessons["a4-browser"] = {
     seeking: "نفحص سجل التصفح: ماذا زار سامي وماذا نزّل قبل الحادثة، مع الانتباه إلى المنطقة الزمنية.",
     finding: "أكثر المواقع زيارة mail.oasis-trading.example (41)؛ وفي 3/10/2026 11:32 AM (محلي) نزّل سامي PDF-Tools-Free.exe من free-pdf-tools.example بعد بحث في Google، قبل الاختراق بنحو 11 ساعة."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "Browser History Examiner يقرأ سجل المتصفح: الزيارات (Website Visits) والتنزيلات (Downloads) وعمليات البحث (Searches).",
+    "أكثر موقع زيارة mail.oasis-trading.example (41 زيارة)؛ وPDF-Tools-Free.exe نُزّل من free-pdf-tools.example بعد الوصول إليه عبر بحث Google (Link).",
+    "انتبه للمنطقة الزمنية: التوقيت المحلي UTC+3، فالساعة 10:15 م محلياً = 19:15 بتوقيت UTC."
+  ],
   objectives: [
     "تحميل سجل Chrome من الجهاز المحلي وقراءة جدول Website Visits.",
     "ترتيب الزيارات بعدد المرات (Visit Count) وتفسير Visit Type وVisited From.",
@@ -76,6 +81,7 @@ window.FSIM.lessons["a4-browser"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["Visit Count 41","Link (free-pdf-tools)","رابط الملف التنفيذي","PDF-Tools-Free.exe"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "visits", kind: "table", tool: "bhe", type: "Website Visits", tz: "Local", title: "Website Visits", heading: "Browser History Examiner › Website Visits (Local time UTC+03:00)" },
       { id: "downloads", kind: "table", tool: "bhe", type: "Downloads", tz: "Local", title: "Downloads", heading: "Browser History Examiner › Downloads (Local time)" },

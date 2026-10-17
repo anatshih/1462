@@ -9,6 +9,11 @@ window.FSIM.lessons["a4-pe"] = {
     seeking: "نفحص الملف دون تشغيله: ما نوعه؟ وهل هو مضغوط؟ وما المكتبات التي يستوردها؟",
     finding: "update.exe ملف PE 32-بت مضغوط بـ UPX (UPX0/UPX1)، يستورد WS2_32.dll وWININET.dll (شبكة) وADVAPI32.dll (RegSetValueExA)، وهذا يتسق مع اتصاله بـ 203.0.113.45:4444 وكتابته في Run."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "PE Explorer يفحص الملف التنفيذي دون تشغيله: update.exe ملف PE بنظام 32-بت (Intel386) بواجهة Windows GUI.",
+    "القسمان UPX0 وUPX1 يعنيان أن الملف مضغوط بأداة UPX لإخفاء محتواه عن الفحص السريع.",
+    "Imports تكشف قدرات البرنامج: connect (شبكة)، وRegSetValueExA (الكتابة في السجل)، وFindFirstFileA (البحث في الملفات)، وهي مطابقة لما رأيناه في المحور 1."
+  ],
   objectives: [
     "قراءة ترويسة ملف PE (Headers Info) وتحديد نوع الملف و32/64 بت ووقت الربط.",
     "اكتشاف الضغط من أسماء الأقسام (UPX0/UPX1).",
@@ -85,6 +90,7 @@ window.FSIM.lessons["a4-pe"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["Machine: Intel386","قسم UPX0","connect (WS2_32.dll)","RegSetValueExA (ADVAPI32.dll)"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "headers", kind: "table", tool: "peexplorer", view: "Headers Info", title: "Headers Info", heading: "PE Explorer › Headers Info — update.exe" },
       { id: "sections", kind: "table", tool: "peexplorer", view: "Section Headers", title: "Section Headers", heading: "PE Explorer › Section Headers — update.exe" },

@@ -10,6 +10,11 @@ window.FSIM.lessons["a3-download"] = {
     seeking: "نحتاج أداة استرجاع (DiskDigger). نتعلم أولاً تنزيلها من مصدرها الرسمي والتحقق من بصمتها، فالمحقق لا يكرر خطأ الضحية.",
     finding: "نُزّل DiskDigger.exe من diskdigger.org وتطابق SHA256 المحسوب (3e7d9a41…) مع القيمة المنشورة؛ أما ملف الموقع الوسيط فلا يطابق ورُفض."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "نزّل أي أداة من موقعها الرسمي فقط.",
+    "احسب بصمة الملف المنزّل بالأمر certutil -hashfile <الملف> SHA256 وقارنها بالقيمة المنشورة في الموقع الرسمي؛ التطابق يعني أن الملف أصلي.",
+    "ملف الموقع الوسيط لم تطابق بصمته، فيُرفض مهما بدا مماثلاً."
+  ],
   objectives: [
     "التعرف على الموقع الرسمي لأداة وتمييزه من موقع وسيط.",
     "حساب Hash للملف المنزّل بأمر certutil ومقارنته بالقيمة المنشورة رسمياً.",
@@ -67,6 +72,7 @@ window.FSIM.lessons["a3-download"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["SHA256 المحسوب","completed successfully"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "official", tool: "cmd", cmd: "certutil -hashfile DiskDigger.exe SHA256", title: "الملف الرسمي", state: "healthy" },
       { id: "third", tool: "cmd", cmd: "certutil -hashfile DiskDigger-setup.exe SHA256", title: "الملف الوسيط", state: "healthy" }

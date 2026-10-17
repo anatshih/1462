@@ -167,6 +167,9 @@ table.data th { background: var(--surface-2); }
 }
 .annot:hover, .annot.is-open { background: var(--hl-outline); }
 .annot.is-danger { background: var(--ar-pink); }
+/* essential values stand out (solid underline, bold: same width in monospace); optional ones are a dotted underline only */
+.annot.is-core { border-block-end: 3px solid var(--annot-border); font-weight: 700; }
+.annot.is-extra:not(.is-danger):not(:hover):not(.is-open) { background: transparent; color: inherit; }
 .meaning-card { background: var(--surface); border: 2px solid var(--primary); border-radius: var(--radius); padding: var(--sp-3) var(--sp-4); margin-block: var(--sp-3); }
 .meaning-card .val { font-family: var(--font-mono); direction: ltr; unicode-bidi: isolate; background: var(--surface-2); padding: 0 0.4em; border-radius: 4px; }
 .meaning-card.is-danger { border-color: var(--danger); }
@@ -242,6 +245,26 @@ body.fsim-focus { overflow: hidden; }
 .stage.is-large .term { font-size: 16px; }
 .card-next { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-block-start: var(--sp-4); padding-block-start: var(--sp-3); border-block-start: 1px solid var(--border); }
 .annot-count { font-weight: 600; color: var(--primary); margin-block: 0 var(--sp-2); }
+
+/* easier self-study: time per stage, essential vs optional, watch first, what to remember */
+.time-note { color: var(--text-muted); font-size: var(--fs-small); margin-block: calc(-1 * var(--sp-2)) var(--sp-3); }
+.cards-group { margin-block: var(--sp-4) var(--sp-2); }
+.cards-extra-head { margin-block-start: var(--sp-5); padding-block-start: var(--sp-3); border-block-start: 1px dashed var(--border); }
+.cards-extra-head p { margin-block: 0; }
+.concept.is-extra { border-style: dashed; }
+.c-more { margin-block: var(--sp-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0 var(--sp-3); background: var(--surface-2); }
+.c-more summary { cursor: pointer; font-weight: 600; color: var(--primary); min-block-size: var(--touch); display: flex; align-items: center; }
+.c-more[open] { padding-block-end: var(--sp-2); }
+.watch-offer { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); background: var(--primary-soft); border-radius: var(--radius); padding: var(--sp-3) var(--sp-4); margin-block: var(--sp-3); }
+.watch-offer p { margin: 0; flex: 1 1 18rem; }
+.core-list { list-style: none; padding: 0; margin: 0 0 var(--sp-3); display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.core-list button { min-block-size: var(--touch); padding-inline: var(--sp-3); border: 1px solid var(--primary); background: var(--surface); color: var(--primary); border-radius: 999px; font: inherit; font-size: var(--fs-small); cursor: pointer; }
+.core-list button.is-found { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+.core-list button.is-found::after { content: " ✔"; }
+.lab-q.is-extra { border-style: dashed; }
+.lesson-summary { background: var(--success-soft); border: 2px solid var(--success); border-radius: var(--radius); padding: var(--sp-3) var(--sp-4); margin-block: var(--sp-4); }
+.lesson-summary h3 { margin-block-start: 0; }
+.lesson-summary li { margin-block-end: var(--sp-2); }
 .lesson-nav { display: flex; justify-content: space-between; gap: var(--sp-3); flex-wrap: wrap; margin-block: var(--sp-6) 0; padding-block-start: var(--sp-4); border-block-start: 1px solid var(--border); }
 .how-to { margin-block: var(--sp-4); }
 .how-to ol { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); padding: 0; list-style: none; margin: var(--sp-3) 0 0; }

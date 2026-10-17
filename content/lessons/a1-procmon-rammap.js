@@ -11,6 +11,11 @@ window.FSIM.lessons["a1-procmon-rammap"] = {
     seeking: "نراقب نشاطه لحظة بلحظة: أي ملفات يقرأ وأي مفاتيح يكتب، وكم يستهلك من الذاكرة.",
     finding: "برنامج update.exe (PID 6120) مسجّل في HKCU\\…\\Run باسم WindowsUpdateHelper منذ 3/10/2026 10:17:41 م، يقرأ ملفات Finance ويضغطها في arc_1003.zip ويرسلها إلى 203.0.113.45:4444."
   },
+  summary: [   // «ما يجب أن تتذكره» at the end of the lesson
+    "Process Monitor يسجّل كل فعل يقوم به البرنامج؛ والفلتر Process Name is update.exe يُخفي الضجيج ولا يحذفه (يبقى 10 من 15 حدثاً).",
+    "تسلسل الأدلة: RegSetValue على مفتاح Run (الاستمرار)، ثم قراءة ملفات Finance، ثم كتابة arc_1003.zip، ثم TCP Send (الإرسال إلى الخارج).",
+    "RAMMap يُظهر أن update.exe أكبر مستهلك للذاكرة الخاصة (1,212,416 K ≈ 1.2 GB)، وهذا يفسّر بطء الجهاز."
+  ],
   objectives: [
     "فلترة آلاف الأحداث في Process Monitor حتى تبقى أحداث البرنامج المشبوه فقط.",
     "قراءة تسلسل أحداث السجل والملفات والشبكة واستنتاج السلوك (تسريب بيانات).",
@@ -79,6 +84,7 @@ window.FSIM.lessons["a1-procmon-rammap"] = {
     ]
   },
   interpret: {
+    coreHighlights: ["RegSetValue … \\Run\\WindowsUpdateHelper","WriteFile … Temp\\arc_1003.zip","TCP Send Length: 65,536","update.exe Private 1,212,416 K"],   // essential values (labels) counted by the discovery counter
     sources: [
       { id: "pm", kind: "table", tool: "procmon", title: "Procmon — update.exe", heading: "Process Monitor — Filter: Process Name is update.exe then Include", state: "infected" },
       { id: "ram", kind: "table", tool: "rammap", title: "RAMMap — Processes", heading: "RAMMap › Processes (مرتبة حسب Private)", state: "infected" }
